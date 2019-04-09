@@ -1,8 +1,12 @@
 package com.mycompany.objects;
 
+import com.codename1.ui.Graphics;
+import com.codename1.ui.geom.Point;
+import com.mycompany.interfaces.ICollider;
+import com.mycompany.interfaces.IDrawable;
 import com.mycompany.interfaces.ISteerable;
 
-public class PlayerShip extends Ship implements ISteerable
+public class PlayerShip extends Ship implements ICollider, IDrawable, ISteerable 
 {
 	private MissileLauncher launcher;
 	
@@ -98,5 +102,23 @@ public class PlayerShip extends Ship implements ISteerable
 	{
 		String parentString = super.toString();
 		return "Player Ship: " + parentString + launcher.toString();
+	}
+
+	@Override
+	public void draw(Graphics g, Point pCmpRelPrnt) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean collidesWith(ICollider other) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void handleCollision(ICollider other) {
+		// TODO Auto-generated method stub
+		
 	}
 }

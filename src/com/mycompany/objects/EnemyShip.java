@@ -1,6 +1,11 @@
 package com.mycompany.objects;
 
-public class EnemyShip extends Ship
+import com.codename1.ui.Graphics;
+import com.codename1.ui.geom.Point;
+import com.mycompany.interfaces.ICollider;
+import com.mycompany.interfaces.IDrawable;
+
+public class EnemyShip extends Ship implements ICollider, IDrawable
 {
 	private int size;
 	private MissileLauncher launcher;
@@ -39,5 +44,23 @@ public class EnemyShip extends Ship
 		String parentString = super.toString();
 		String thisString = " size = " + size;
 		return "Non-Player Ship: " + parentString + thisString;
+	}
+
+	@Override
+	public void draw(Graphics g, Point pCmpRelPrnt) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean collidesWith(ICollider other) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void handleCollision(ICollider other) {
+		// TODO Auto-generated method stub
+		
 	}
 }

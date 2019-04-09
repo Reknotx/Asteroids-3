@@ -1,6 +1,11 @@
 package com.mycompany.objects;
 
-public class Asteroid extends MoveableGameObject
+import com.codename1.ui.Graphics;
+import com.codename1.ui.geom.Point;
+import com.mycompany.interfaces.ICollider;
+import com.mycompany.interfaces.IDrawable;
+
+public class Asteroid extends MoveableGameObject implements ICollider, IDrawable
 {
 	private int size = 0;
 	
@@ -26,5 +31,23 @@ public class Asteroid extends MoveableGameObject
 		String parentString = super.toString();
 		String thisString = " size = " + size;
 		return "Asteroid: " + parentString + thisString;
+	}
+
+	@Override
+	public void draw(Graphics g, Point pCmpRelPrnt) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean collidesWith(ICollider other) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void handleCollision(ICollider other) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -1,6 +1,10 @@
 package com.mycompany.objects;
 
-public class SpaceStation extends FixedGameObject
+import com.codename1.ui.Graphics;
+import com.codename1.ui.geom.Point;
+import com.mycompany.interfaces.IDrawable;
+
+public class SpaceStation extends FixedGameObject implements IDrawable
 {
 	private int thisId;
 	private int blinkRate;
@@ -53,5 +57,11 @@ public class SpaceStation extends FixedGameObject
 		String parentString = super.toString();
 		String thisString = " rate = " + blinkRate;
 		return "Station: " + parentString + thisString;
+	}
+
+	@Override
+	public void draw(Graphics g, Point pCmpRelPrnt) 
+	{
+		
 	}
 }

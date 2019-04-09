@@ -1,8 +1,12 @@
 package com.mycompany.objects;
 
+import com.codename1.ui.Graphics;
+import com.codename1.ui.geom.Point;
 import com.codename1.ui.geom.Point2D;
+import com.mycompany.interfaces.ICollider;
+import com.mycompany.interfaces.IDrawable;
 
-public class Missile extends MoveableGameObject
+public class Missile extends MoveableGameObject implements ICollider, IDrawable
 {
 	public enum MissileType { PLAYER, ENEMY }
 	private MissileType type;
@@ -70,5 +74,23 @@ public class Missile extends MoveableGameObject
 		{
 			return "NPS's Missile: " + parentString + thisString;
 		}
+	}
+
+	@Override
+	public void draw(Graphics g, Point pCmpRelPrnt) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean collidesWith(ICollider other) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void handleCollision(ICollider other) {
+		// TODO Auto-generated method stub
+		
 	}
 }
