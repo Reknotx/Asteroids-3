@@ -1,23 +1,26 @@
-# Compiled class file
-*.class
-
-# Log file
-*.log
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
+.DS_Store
 *.jar
-*.war
-*.nar
-*.ear
+build/
+dist/
+lib/impl/
+native/internal_tmp/
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
 *.zip
-*.tar.gz
-*.rar
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+.externalToolBuilders/
+*.launch
+*.pydevproject
+.cproject
+.factorypath
+.buildpath
+.project
+.classpath
