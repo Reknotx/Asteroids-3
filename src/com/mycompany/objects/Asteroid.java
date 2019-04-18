@@ -34,9 +34,11 @@ public class Asteroid extends MoveableGameObject implements ICollider, IDrawable
 	}
 
 	@Override
-	public void draw(Graphics g, Point pCmpRelPrnt) {
-		// TODO Auto-generated method stub
-		
+	public void draw(Graphics g, Point pCmpRelPrnt) 
+	{
+		g.setColor(this.GetColor());
+		g.drawArc((int)this.GetLocationX(), (int)this.GetLocationY(), this.GetSize(), this.GetSize(), 0, 359);
+		g.fillArc((int)this.GetLocationX(), (int)this.GetLocationY(), this.GetSize(), this.GetSize(), 0, 359);
 	}
 
 	@Override

@@ -26,11 +26,10 @@ public class Game extends Form
 		mv = new MapView();
 		pv = new PointsView();
 		
-		gw.setGameWorldHeight(mv.getMapHeight());
-		gw.setGameWorldWidth(mv.getMapWidth());
+//		System.out.println("Height = " + gw.getGameWorldHeight());
+//		System.out.println("Width = " + gw.getGameWorldWidth());
 		
-		System.out.println("Height = " + gw.getGameWorldHeight());
-		System.out.println("Width = " + gw.getGameWorldWidth());
+		System.out.println("Form Height = " + this.getHeight() + " Form Width = " + this.getWidth());
 		
 		//Register the observers
 		gw.addObserver(mv);
@@ -38,10 +37,17 @@ public class Game extends Form
 		
 		SetUpCommands();
 		SetUpSideMenu();
+		
 		this.addComponent(BorderLayout.CENTER, mv);
 		this.addComponent(BorderLayout.NORTH, pv);
 		
+		System.out.println(mv.getX());
+		
 		gw.init();
+		
+		gw.setGameWorldHeight(mv.getMapHeight());
+		gw.setGameWorldWidth(mv.getMapWidth());
+		
 		this.show();
 	}
 	
@@ -49,6 +55,7 @@ public class Game extends Form
 	{
 		/* Container creation start */
 		Container buttonContainer = new Container(new BoxLayout(BoxLayout.Y_AXIS));
+		buttonContainer.setWidth(1000);
 		buttonContainer.setScrollableY(false);
 		Label cmdLBL = new Label("Commands");
 		buttonContainer.add(cmdLBL);
@@ -198,6 +205,9 @@ public class Game extends Form
 		GameButton advanceGameTime = new GameButton(tickCMD);
 		buttonContainer.add(advanceGameTime);
 		/* Advance game clock button */
+		System.out.println("Button container: " + buttonContainer.getPreferredSize());
+		
+		mv.setPrefSize(this.getWidth() - buttonContainer.getPreferredW(), buttonContainer.getPreferredH());
 		
 		this.addComponent(BorderLayout.WEST, buttonContainer);
 	}

@@ -9,6 +9,7 @@ import com.codename1.ui.Label;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.FlowLayout;
 import com.mycompany.a3.GameWorldProxy;
+import com.mycompany.interfaces.IGameWorld;
 
 //View in MVC architecture
 public class PointsView extends Container implements Observer 
@@ -35,7 +36,7 @@ public class PointsView extends Container implements Observer
 	@Override
 	public void update(Observable observable, Object data) 
 	{
-		GameWorldProxy tempProxy = (GameWorldProxy) data;
+		IGameWorld tempProxy = (IGameWorld) data;
 		pointsValue.setText("" + Integer.toString(tempProxy.getPoints()));
 		missileCountNum.setText("" + Integer.toString(tempProxy.getMissileCount()));
 		elapsedTimeNum.setText("" + Integer.toString(tempProxy.getTime()));
