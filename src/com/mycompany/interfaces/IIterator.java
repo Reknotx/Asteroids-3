@@ -17,13 +17,6 @@ public interface IIterator
 	public GameObject getNext();
 	
 	/**
-	 * Returns the current item in the list. To be used in conjunction with
-	 * getNext when searching for objects
-	 * @return The game object currently being looked at
-	 */
-	public GameObject getCurrent();
-	
-	/**
 	 * Removes the item at the current index and decreases index by one. To be
 	 * used in conjunction with getNext when searching for objects.
 	 */

@@ -38,18 +38,23 @@ public class EnemyShip extends Ship implements ICollider, IDrawable
 	{
 		return launcher.GetLauncherDir();
 	}
-	
-	public String toString()
-	{
-		String parentString = super.toString();
-		String thisString = " size = " + size;
-		return "Non-Player Ship: " + parentString + thisString;
-	}
 
 	@Override
-	public void draw(Graphics g, Point pCmpRelPrnt) {
-		// TODO Auto-generated method stub
+	public void draw(Graphics g, Point pCmpRelPrnt) 
+	{
+		g.setColor(this.GetColor());
 		
+		int xLoc = (int)this.GetFullLocation().getX() + pCmpRelPrnt.getX();
+		int yLoc = (int)this.GetFullLocation().getY() + pCmpRelPrnt.getY();
+		
+		int[] xPoints = { xLoc, (xLoc - size), (xLoc + size), xLoc };
+		
+		int[] yPoints = { (yLoc + size), (yLoc - size), (yLoc - size), (yLoc + size) };
+		
+		int nPoints = 4;
+		
+		g.drawPolygon(xPoints, yPoints, nPoints);
+		g.fillPolygon(xPoints, yPoints, nPoints);
 	}
 
 	@Override
@@ -62,5 +67,12 @@ public class EnemyShip extends Ship implements ICollider, IDrawable
 	public void handleCollision(ICollider other) {
 		// TODO Auto-generated method stub
 		
+	}	
+	
+	public String toString()
+	{
+		String parentString = super.toString();
+		String thisString = " size = " + size;
+		return "Non-Player Ship: " + parentString + thisString;
 	}
 }

@@ -67,12 +67,6 @@ public class GameCollection implements ICollection
 		}
 
 		@Override
-		public GameObject getCurrent() 
-		{
-			return list.get(index);
-		}
-
-		@Override
 		public void remove() 
 		{
 			list.remove(index);

@@ -1,14 +1,18 @@
 package com.mycompany.objects;
 
+import com.codename1.ui.Graphics;
+import com.codename1.ui.geom.Point;
+import com.mycompany.interfaces.IDrawable;
 import com.mycompany.interfaces.ISteerable;
 
-public class MissileLauncher extends MoveableGameObject implements ISteerable
+public class MissileLauncher extends MoveableGameObject implements IDrawable, ISteerable
 {	
 	/**
 	 * @param startDir - The starting direction of the launcher, will typically be zero unless stated otherwise
 	 */
 	public MissileLauncher(int startDir)
 	{
+		SetColor(0, 0, 0);
 		SetDirection(startDir);
 	}
 	
@@ -50,6 +54,21 @@ public class MissileLauncher extends MoveableGameObject implements ISteerable
 				SetDirection(GetDirection() + amount);			
 			}
 		}
+	}
+	
+	@Override
+	public void draw(Graphics g, Point pCmpRelPrnt) 
+	{
+		g.setColor(this.GetColor());
+		
+		int xLoc = (int)this.GetFullLocation().getX() + pCmpRelPrnt.getX();
+		int yLoc = (int)this.GetFullLocation().getY() + pCmpRelPrnt.getY();
+		
+		int x2 = (int) Math.cos( Math.toRadians(90 - GetDirection())) + xLoc + 15;
+		int y2 = (int) Math.sin( Math.toRadians(90 - GetDirection())) + yLoc + 15;
+		
+		g.drawLine(xLoc, yLoc, x2, y2);
+		
 	}
 
 	public String toString()

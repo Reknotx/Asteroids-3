@@ -17,7 +17,6 @@ public class PlayerShip extends Ship implements ICollider, IDrawable, ISteerable
 	{
 		super(10);
 		launcher = new MissileLauncher(0);
-		SetLocation(512.0, 384.0);
 		SetSpeed(0);
 		SetDirection(0);
 		SetColor(0, 255, 255);
@@ -43,9 +42,9 @@ public class PlayerShip extends Ship implements ICollider, IDrawable, ISteerable
 	/**
 	 * Resets the player's position in the gameworld back to spawn.
 	 */
-	public void ResetPosition()
+	public void ResetPosition(double x, double y)
 	{
-		SetLocation(512.0, 384.0);
+		SetLocation(x, y);
 	}
 	
 	/**
@@ -98,27 +97,39 @@ public class PlayerShip extends Ship implements ICollider, IDrawable, ISteerable
 		launcher.Steer(amount);
 	}
 
-	public String toString()
+	@Override
+	public void draw(Graphics g, Point pCmpRelPrnt) 
 	{
-		String parentString = super.toString();
-		return "Player Ship: " + parentString + launcher.toString();
-	}
-
-	@Override
-	public void draw(Graphics g, Point pCmpRelPrnt) {
-		// TODO Auto-generated method stub
+		g.setColor(this.GetColor());
 		
+		int xLoc = (int)this.GetFullLocation().getX() + pCmpRelPrnt.getX();
+		int yLoc = (int)this.GetFullLocation().getY() + pCmpRelPrnt.getY();
+		
+		int[] xPoints = { xLoc, (xLoc - 15), (xLoc + 15), xLoc };
+		
+		int[] yPoints = { (yLoc + 15), (yLoc - 15), (yLoc - 15), (yLoc + 15) };
+		
+		int nPoints = 4;
+		
+		g.drawPolygon(xPoints, yPoints, nPoints);
+		g.fillPolygon(xPoints, yPoints, nPoints);
 	}
 
 	@Override
-	public boolean collidesWith(ICollider other) {
-		// TODO Auto-generated method stub
+	public boolean collidesWith(ICollider other)
+	{
 		return false;
 	}
 
 	@Override
-	public void handleCollision(ICollider other) {
-		// TODO Auto-generated method stub
+	public void handleCollision(ICollider other)
+	{
 		
+	}
+	
+	public String toString()
+	{
+		String parentString = super.toString();
+		return "Player Ship: " + parentString + launcher.toString();
 	}
 }

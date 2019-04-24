@@ -6,11 +6,9 @@ import java.util.Observer;
 import com.codename1.charts.util.ColorUtil;
 import com.codename1.ui.Container;
 import com.codename1.ui.Graphics;
-import com.codename1.ui.TextArea;
 import com.codename1.ui.geom.Point;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.plaf.Border;
-import com.mycompany.a3.GameWorldProxy;
 import com.mycompany.interfaces.IDrawable;
 import com.mycompany.interfaces.IGameWorld;
 import com.mycompany.interfaces.IIterator;
@@ -28,9 +26,6 @@ public class MapView extends Container implements Observer
 	{
 		this.getAllStyles().setBorder(Border.createLineBorder(2, ColorUtil.GREEN));
 		this.setLayout(new BorderLayout());
-				
-//		this.setWidth(1024);
-//		this.setHeight(768);
 	}
 
 	@Override
@@ -46,7 +41,7 @@ public class MapView extends Container implements Observer
 	{
 		super.paint(g);
 		
-		Point pCmpRelPrnt = new Point(0, 0);
+		Point pCmpRelPrnt = new Point(this.getX(), this.getY());
 		Object curObject = new Object();
 		IIterator iterator = gwProxy.getCollection().getIterator();
 		
@@ -60,17 +55,16 @@ public class MapView extends Container implements Observer
 				((IDrawable) curObject).draw(g, pCmpRelPrnt);
 			}
 		}
-//		g.setColor(ColorUtil.BLACK);
-//		g.drawRect(x - getParent().getAbsoluteX(), y - getParent().getAbsoluteY(), 30, 30);
-//		g.fillRect(x - getParent().getAbsoluteX(), y - getParent().getAbsoluteY(), 30, 30);
 	}
 	
 	public void setPrefSize(int width, int height)
 	{
+		
+		//Need to fix the size of the map
 		this.setWidth(width);
 		this.setHeight(height);
 		
-		System.out.println("width = " + getMapWidth() + " height = " + getMapHeight());
+		System.out.println("Map view: width = " + getMapWidth() + " height = " + getMapHeight());
 	}
 	
 	/**

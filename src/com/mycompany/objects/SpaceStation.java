@@ -51,17 +51,27 @@ public class SpaceStation extends FixedGameObject implements IDrawable
 			timeSinceBlink = 0;
 		}
 	}
+
+	@Override
+	public void draw(Graphics g, Point pCmpRelPrnt) 
+	{
+		g.setColor(this.GetColor());
+
+		int xLoc = (int)this.GetFullLocation().getX() + pCmpRelPrnt.getX();
+		int yLoc = (int)this.GetFullLocation().getY() + pCmpRelPrnt.getY();
+		
+		g.drawArc(xLoc, yLoc, 45, 30, 0, 360);
+		
+		if (lightsOn)
+		{			
+			g.fillArc(xLoc, yLoc, 45, 30, 0, 360);
+		}
+	}
 	
 	public String toString()
 	{
 		String parentString = super.toString();
 		String thisString = " rate = " + blinkRate;
 		return "Station: " + parentString + thisString;
-	}
-
-	@Override
-	public void draw(Graphics g, Point pCmpRelPrnt) 
-	{
-		
 	}
 }

@@ -61,6 +61,33 @@ public class Missile extends MoveableGameObject implements ICollider, IDrawable
 		fuelLevel--;
 		super.Move();
 	}
+
+	@Override
+	public void draw(Graphics g, Point pCmpRelPrnt) 
+	{
+		g.setColor(this.GetColor());
+		
+		int xLoc = (int)this.GetFullLocation().getX() + pCmpRelPrnt.getX();
+		int yLoc = (int)this.GetFullLocation().getY() + pCmpRelPrnt.getY();
+		
+		int width = 16;
+		int height = 24;
+		
+		g.drawRect((xLoc - (width / 2)), yLoc, width, height);
+		g.fillRect((xLoc - (width / 2)), yLoc, width, height);
+	}
+
+	@Override
+	public boolean collidesWith(ICollider other) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void handleCollision(ICollider other) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	public String toString()
 	{
@@ -74,23 +101,5 @@ public class Missile extends MoveableGameObject implements ICollider, IDrawable
 		{
 			return "NPS's Missile: " + parentString + thisString;
 		}
-	}
-
-	@Override
-	public void draw(Graphics g, Point pCmpRelPrnt) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public boolean collidesWith(ICollider other) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void handleCollision(ICollider other) {
-		// TODO Auto-generated method stub
-		
 	}
 }

@@ -6,16 +6,22 @@ import com.codename1.ui.Label;
 import com.codename1.ui.Toolbar;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
+import com.codename1.ui.util.UITimer;
 import com.mycompany.commands.*;
 import com.mycompany.views.MapView;
 import com.mycompany.views.PointsView;
 
-//Game is the Controller in MVC architecture
-public class Game extends Form 
+//Game is the Controller in MVC architecture\
+
+//Need to fix the map size
+public class Game extends Form  implements Runnable
 {
 	private GameWorld gw;
 	private MapView mv;
 	private PointsView pv;
+	private UITimer timer;
+	private TickCmd tickRun;
+	private Toolbar menu;
 	
 	public Game()
 	{
@@ -29,36 +35,45 @@ public class Game extends Form
 //		System.out.println("Height = " + gw.getGameWorldHeight());
 //		System.out.println("Width = " + gw.getGameWorldWidth());
 		
-		System.out.println("Form Height = " + this.getHeight() + " Form Width = " + this.getWidth());
+		System.out.println("Form Width = " + this.getWidth() + " Form Height = " + this.getHeight());
 		
 		//Register the observers
 		gw.addObserver(mv);
 		gw.addObserver(pv);
-		
-		SetUpCommands();
+
+		this.addComponent(BorderLayout.NORTH, pv);
+		this.addComponent(BorderLayout.CENTER, mv);
+
 		SetUpSideMenu();
 		
-		this.addComponent(BorderLayout.CENTER, mv);
-		this.addComponent(BorderLayout.NORTH, pv);
-		
-		System.out.println(mv.getX());
+		SetUpCommands();
 		
 		gw.init();
+		
+		this.show();
+		
+		System.out.println("Map width = " + mv.getMapWidth() + " Map height = " + mv.getMapHeight());
 		
 		gw.setGameWorldHeight(mv.getMapHeight());
 		gw.setGameWorldWidth(mv.getMapWidth());
 		
-		this.show();
+		timer = new UITimer(this);
+		
+		tickRun = new TickCmd(gw);
+		
+		//timer.schedule(20, true, this);
+	}
+	
+	@Override
+	public void run()
+	{
+		tickRun.actionPerformed(null);
 	}
 	
 	private void SetUpCommands()
 	{
 		/* Container creation start */
 		Container buttonContainer = new Container(new BoxLayout(BoxLayout.Y_AXIS));
-		buttonContainer.setWidth(1000);
-		buttonContainer.setScrollableY(false);
-		Label cmdLBL = new Label("Commands");
-		buttonContainer.add(cmdLBL);
 		/* Container creation end */
 		
 		/* Add asteroid button */
@@ -66,12 +81,6 @@ public class Game extends Form
 		GameButton addAsteroid = new GameButton(asteroidCMD);
 		buttonContainer.add(addAsteroid);
 		/* Add asteroid button */
-
-		/* Add enemy ship button */
-		AddEnemyShipCmd addEnemyCMD = new AddEnemyShipCmd(gw);
-		GameButton addEnemy = new GameButton(addEnemyCMD);
-		buttonContainer.add(addEnemy);
-		/* Add enemy ship button */
 		
 		/* Add space station button */
 		AddSpaceStationCmd addStationCMD = new AddSpaceStationCmd(gw);
@@ -138,12 +147,6 @@ public class Game extends Form
 		buttonContainer.add(playerFire);
 		/* Fire player missile button */
 		
-		/* Fire enemy missile button */
-		FireEnemyMissileCmd enemyFireCMD = new FireEnemyMissileCmd(gw);
-		GameButton enemyFire = new GameButton(enemyFireCMD);
-		buttonContainer.add(enemyFire);
-		/* Fire enemy missile button */
-		
 		/* Jump button */
 		JumpCmd jumpCMD = new JumpCmd(gw);
 		GameButton jump = new GameButton(jumpCMD);
@@ -158,63 +161,19 @@ public class Game extends Form
 		buttonContainer.add(reload);
 		/* Reload button */
 		
-		/* Player missile hits asteroid button */
-		MissileKillsAsteroidCmd playerShootAsteroidCMD = new MissileKillsAsteroidCmd(gw);
-		GameButton playerShootsAsteroid = new GameButton(playerShootAsteroidCMD);
-		buttonContainer.add(playerShootsAsteroid);
-		/* Player missile hits asteroid button */
+		//Sets the size of the map view container so that it fills in the remaining leftover space properly
 		
-		/* Player missile hits enemy button */
-		MissileKillsEnemyCmd playerShootEnemyCMD = new MissileKillsEnemyCmd(gw);
-		GameButton playerShootsEnemy = new GameButton(playerShootEnemyCMD);
-		buttonContainer.add(playerShootsEnemy);
-		/* Player missile hits enemy button */
+		//this doesn't get me a perfect size for the map yet, need to work on this and find out how to 
+//		mv.setPrefSize(this.getWidth() - buttonContainer.getPreferredW(), this.getHeight() - (pv.getHeight() + menu.getHeight()) );
 		
-		/* Enemy missile hits player button */
-		EnemyMissileKillsPlayerCmd enemyShootPlayerCMD = new EnemyMissileKillsPlayerCmd(gw);
-		GameButton enemyShootsPlayer = new GameButton(enemyShootPlayerCMD);
-		buttonContainer.add(enemyShootsPlayer);
-		/* Enemy missile hits player button */
-		
-		/* Player collides with asteroid button */
-		PlayerHitsAsteroidCmd playerHitAsteroidCMD = new PlayerHitsAsteroidCmd(gw);
-		GameButton playerCollidesWithAsteroid = new GameButton(playerHitAsteroidCMD);
-		buttonContainer.add(playerCollidesWithAsteroid);
-		/* Player collides with asteroid button */
-		
-		/* Player collides with enemy button */
-		PlayerHitsEnemyCmd playerHitEnemyCMD = new PlayerHitsEnemyCmd(gw);
-		GameButton playerCollidesWithEnemy = new GameButton(playerHitEnemyCMD);
-		buttonContainer.add(playerCollidesWithEnemy);
-		/* Player collides with enemy button */
-		
-		/* Asteroid collides with asteroid button */
-		AsteroidHitsAsteroidCmd asteroidHitAsteroidCMD = new AsteroidHitsAsteroidCmd(gw);
-		GameButton asteroidsCollide = new GameButton(asteroidHitAsteroidCMD);
-		buttonContainer.add(asteroidsCollide);
-		/* Asteroid collides with asteroid button */
-		
-		/* Asteroid collides with enemy button */
-		AsteroidHitsEnemyCmd asteroidHitEnemyCMD = new AsteroidHitsEnemyCmd(gw);
-		GameButton asteroidCollidesWithEnemy = new GameButton(asteroidHitEnemyCMD);
-		buttonContainer.add(asteroidCollidesWithEnemy);
-		/* Asteroid collides with enemy button */
-		
-		/* Advance game clock button */
-		TickCmd tickCMD = new TickCmd(gw);
-		GameButton advanceGameTime = new GameButton(tickCMD);
-		buttonContainer.add(advanceGameTime);
-		/* Advance game clock button */
-		System.out.println("Button container: " + buttonContainer.getPreferredSize());
-		
-		mv.setPrefSize(this.getWidth() - buttonContainer.getPreferredW(), buttonContainer.getPreferredH());
+		mv.setWidth(this.getWidth() - buttonContainer.getPreferredW() - mv.getX());
 		
 		this.addComponent(BorderLayout.WEST, buttonContainer);
 	}
 	
 	private void SetUpSideMenu()
 	{		
-		Toolbar menu = new Toolbar();
+		menu = new Toolbar();
 		this.setToolbar(menu);
 		menu.setTitle("Asteroid Game");
 		

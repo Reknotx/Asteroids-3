@@ -16,7 +16,7 @@ public abstract class GameObject
 	{
 		/*
 		 * Due to the need to obtain the gameworld size by obtaining the mapview width and
-		 * height, this math is no longer needed in in the constructor nor can it be salvaged
+		 * height, this math is no longer needed in the constructor nor can it be salvaged
 		 * here. As a result the math has been moved down into setRandLocation. Location needs
 		 * to now be set in the gameworld spawn methods.
 		 * Keeping code for reference purposes only.

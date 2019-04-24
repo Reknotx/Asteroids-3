@@ -95,6 +95,7 @@ public class GameWorld extends Observable implements IGameWorld
 			PlayerShip player = new PlayerShip();			
 			missileCount = 10;
 			collection.add(player);
+			player.SetLocation(mapWidth / 2, mapHeight / 2);
 			InformObservers();
 		}
 		else
@@ -150,12 +151,12 @@ public class GameWorld extends Observable implements IGameWorld
 			if (turnRight)
 			{
 				//Rotate player clockwise (right)
-				playerObj.Steer(1);
+				playerObj.Steer(10);
 			}
 			else
 			{
 				//Rotate player counter-clockwise (left)
-				playerObj.Steer(-1);
+				playerObj.Steer(-10);
 			}
 			InformObservers();
 		}
@@ -226,7 +227,7 @@ public class GameWorld extends Observable implements IGameWorld
 		PlayerShip playerObj = FindPlayer();
 		if (playerObj != null) 
 		{
-			playerObj.ResetPosition();
+			playerObj.ResetPosition(mapWidth / 2.0, mapHeight / 2.0);
 			InformObservers();
 		}
 	}
@@ -355,9 +356,10 @@ public class GameWorld extends Observable implements IGameWorld
 					case ASTEROID:
 						while (iterator.hasNext())
 						{
-							if (iterator.getNext() instanceof Asteroid)
+							Object curObj = iterator.getNext();
+							if (curObj instanceof Asteroid)
 							{
-								objectTwo = (Asteroid) iterator.getCurrent();
+								objectTwo = (Asteroid) curObj;
 								if (!objectTwo.equals(objectOne))
 								{
 									break;									
@@ -413,27 +415,38 @@ public class GameWorld extends Observable implements IGameWorld
 	public void AdvanceGameClock()
 	{
 		IIterator iterator = collection.getIterator();
+		//Handles movement of objects in the world
 		while (iterator.hasNext())
 		{
-			if (iterator.getNext() instanceof IMoveable)
+			Object obj = iterator.getNext();
+			if (obj instanceof IMoveable)
 			{
-				IMoveable moveObj = (IMoveable) iterator.getCurrent();
+				IMoveable moveObj = (IMoveable) obj;
 				moveObj.Move();
-				if (iterator.getCurrent() instanceof Missile)
+				if (moveObj instanceof Missile)
 				{
-					Missile missileObj = (Missile) iterator.getCurrent();
+					Missile missileObj = (Missile) moveObj;
 					if (missileObj.GetFuel() == 0)
 					{
 						iterator.remove();
 					}
 				}
 			}
-			else if (iterator.getCurrent() instanceof SpaceStation)
+			else if (obj instanceof SpaceStation)
 			{
-				SpaceStation stationObj = (SpaceStation) iterator.getCurrent();
+				SpaceStation stationObj = (SpaceStation) obj;
 				stationObj.IncreaseBlinkTime();
 			}
 		}
+		
+		//Time to re-evaluate the collection for collisions
+		
+		iterator = collection.getIterator();
+		while (iterator.hasNext())
+		{
+			
+		}
+		
 		elapsedTime++;
 		InformObservers();
 	}
@@ -462,9 +475,10 @@ public class GameWorld extends Observable implements IGameWorld
 		PlayerShip temp = null;
 		while (iterator.hasNext())
 		{
-			if (iterator.getNext() instanceof PlayerShip)
+			Object curObj = iterator.getNext();
+			if (curObj instanceof PlayerShip)
 			{
-				temp = (PlayerShip) iterator.getCurrent();
+				temp = (PlayerShip) curObj;
 				break;
 			}
 		}
@@ -487,9 +501,10 @@ public class GameWorld extends Observable implements IGameWorld
 		Asteroid temp = null;
 		while (iterator.hasNext())
 		{
-			if (iterator.getNext() instanceof Asteroid)
+			Object curObj = iterator.getNext();
+			if (curObj instanceof Asteroid)
 			{
-				temp = (Asteroid) iterator.getCurrent();
+				temp = (Asteroid) curObj;
 				break;
 			}
 		}
@@ -512,9 +527,10 @@ public class GameWorld extends Observable implements IGameWorld
 		EnemyShip temp = null;
 		while (iterator.hasNext())
 		{
-			if (iterator.getNext() instanceof EnemyShip)
+			Object curObj = iterator.getNext();
+			if (curObj instanceof EnemyShip)
 			{
-				temp = (EnemyShip) iterator.getCurrent();
+				temp = (EnemyShip) curObj;
 				break;
 			}
 		}
@@ -538,9 +554,10 @@ public class GameWorld extends Observable implements IGameWorld
 		EnemyShip temp = null;
 		while (iterator.hasNext())
 		{
-			if (iterator.getNext() instanceof EnemyShip)
+			Object curObj = iterator.getNext();
+			if (curObj instanceof EnemyShip)
 			{
-				temp = (EnemyShip) iterator.getCurrent();
+				temp = (EnemyShip) curObj;
 				if (temp.GetMissileCount() > 0)
 				{
 					break;					
@@ -571,9 +588,10 @@ public class GameWorld extends Observable implements IGameWorld
 		Missile temp = null;
 		while (iterator.hasNext())
 		{
-			if (iterator.getNext() instanceof Missile)
+			Object curObj = iterator.getNext();
+			if (curObj instanceof Missile)
 			{
-				temp = (Missile) iterator.getCurrent();
+				temp = (Missile) curObj;
 				if (temp.GetType().equals(type))
 				{
 					break;					
@@ -603,9 +621,10 @@ public class GameWorld extends Observable implements IGameWorld
 		SpaceStation temp = null;
 		while (iterator.hasNext())
 		{
-			if (iterator.getNext() instanceof SpaceStation)
+			Object curObj = iterator.getNext();
+			if (curObj instanceof SpaceStation)
 			{
-				temp = (SpaceStation) iterator.getCurrent();
+				temp = (SpaceStation) curObj;
 				break;
 			}
 		}
