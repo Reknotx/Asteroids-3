@@ -74,8 +74,10 @@ public class Asteroid extends MoveableGameObject implements ICollider, IDrawable
 	@Override
 	public void handleCollision(ICollider other) 
 	{
+		
 		this.setCollisionFlag();
 		other.setCollisionFlag();
+		
 	}
 
 	@Override

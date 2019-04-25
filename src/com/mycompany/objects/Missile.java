@@ -13,6 +13,8 @@ public class Missile extends MoveableGameObject implements ICollider, IDrawable
 	private int fuelLevel;
 	
 	private boolean collisionFlag = false;
+	private GameObject shotObject = null;
+	private int scoreGained = 0;
 	
 	/**
 	 * Missile that travels through world.
@@ -55,6 +57,11 @@ public class Missile extends MoveableGameObject implements ICollider, IDrawable
 	public MissileType GetType()
 	{
 		return type;
+	}
+	
+	public int GetScoreGained()
+	{
+		return scoreGained;
 	}
 
 	@Override
@@ -108,7 +115,29 @@ public class Missile extends MoveableGameObject implements ICollider, IDrawable
 	@Override
 	public void handleCollision(ICollider other)
 	{
-		
+		if (this.GetType() == MissileType.PLAYER)
+		{
+			if (other instanceof Asteroid)
+			{
+				this.setCollisionFlag();
+				other.setCollisionFlag();
+				scoreGained = 10;
+			}
+			else if (other instanceof EnemyShip)
+			{
+				this.setCollisionFlag();
+				other.setCollisionFlag();
+				scoreGained = 20;
+			}
+		}
+		else if (this.GetType() == MissileType.ENEMY)
+		{
+			if (other instanceof PlayerShip)
+			{
+				this.setCollisionFlag();
+				other.setCollisionFlag();
+			}
+		}
 	}
 
 	@Override

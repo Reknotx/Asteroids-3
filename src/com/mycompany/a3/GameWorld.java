@@ -189,7 +189,7 @@ public class GameWorld extends Observable implements IGameWorld
 		{
 			if (playerObj.GetMissileCount() > 0)
 			{				
-				Missile missile = new Missile(playerObj.GetLauncherDir(), playerObj.GetSpeed() + 2, playerObj.GetFullLocation(), MissileType.PLAYER);
+				Missile missile = new Missile(playerObj.GetLauncherDir(), playerObj.GetSpeed() + 5, playerObj.GetFullLocation(), MissileType.PLAYER);
 				collection.add(missile);
 				missileCount--;
 				playerObj.Fire();
@@ -253,42 +253,28 @@ public class GameWorld extends Observable implements IGameWorld
 	/**
 	 * Used to destroy asteroids and enemy ships with missiles depending on the command.
 	 * Will also increment the player score based on predetermined values depending on
-	 * the enemy as well. A value of true indicates an asteroid was struck, a value of false
-	 * indicates that an enemy ship was struck instead.
+	 * the enemy as well.
 	 * @param entity - entity as listed in the EntityType enumeration. Select either asteroid or enemy ship
 	 */
 	public void DestroyEnemy(EntityType entity)
 	{
 		//Destroy asteroid or enemy ship with player missile
 		//increment score based on which enemy was destroyed
-		Missile missileObj = FindMissile(MissileType.PLAYER);
-		GameObject enemy = null;
-		if (missileObj != null) 
-		{	
-			switch (entity)
-			{
-				case ASTEROID:
-					enemy = FindAsteroid();
-					score += 10;
-					break;
-					
-				case ENEMY:
-					enemy = FindEnemy();
-					score += 20;
-					break;
-					
-				default:
-					System.err.println("Wrong enemy selected");
-			}
-			
-			if (enemy != null)
-			{
-				IIterator iterator = collection.getIterator();
-				iterator.remove(missileObj);
-				iterator.remove(enemy);
-				InformObservers();
-			}
+		switch (entity)
+		{
+			case ASTEROID:
+				score += 10;
+				break;
+				
+			case ENEMY:
+				score += 20;
+				break;
+				
+			default:
+				System.err.println("Wrong enemy selected");
 		}
+		
+		InformObservers();
 	}
 	
 	/**
@@ -296,20 +282,13 @@ public class GameWorld extends Observable implements IGameWorld
 	 */
 	public void KillPlayerWithEnemyMissile()
 	{
-		Missile missileObj = FindMissile(MissileType.ENEMY);
-		if (missileObj != null)
-		{
-			PlayerShip playerObj = FindPlayer();
-			if (playerObj != null)
-			{
-				IIterator iterator = collection.getIterator();
-				iterator.remove(playerObj);
-				iterator.remove(missileObj);
-				ReduceLives();
-				InformObservers();
-			}
-		}
 		
+		PlayerShip playerObj = FindPlayer();
+		if (playerObj != null)
+		{
+			ReduceLives();
+			InformObservers();
+		}
 	}
 	
 	/**
@@ -343,7 +322,6 @@ public class GameWorld extends Observable implements IGameWorld
 					break;
 					
 				case ASTEROID:
-					objectOne = FindAsteroid();
 					break;
 					
 				default:
@@ -376,7 +354,6 @@ public class GameWorld extends Observable implements IGameWorld
 						break;
 						
 					case ENEMY:
-						objectTwo = FindEnemy();
 						break;
 						
 					default:
@@ -386,8 +363,6 @@ public class GameWorld extends Observable implements IGameWorld
 				
 				if (objectTwo != null)
 				{
-					iterator.remove(objectOne);
-					iterator.remove(objectTwo);
 					if (objectOne instanceof PlayerShip)
 					{
 						ReduceLives();
@@ -437,7 +412,10 @@ public class GameWorld extends Observable implements IGameWorld
 			else if (obj instanceof SpaceStation)
 			{
 				SpaceStation stationObj = (SpaceStation) obj;
-				stationObj.IncreaseBlinkTime();
+				if (elapsedTime % 1000 == 0)
+				{					
+					stationObj.IncreaseBlinkTime();
+				}
 			}
 		}
 		
@@ -497,6 +475,21 @@ public class GameWorld extends Observable implements IGameWorld
 			GameObject obj = flagRemoval.getNext();
 			if (obj instanceof ICollider && ((ICollider)obj).getCollisionFlag())
 			{
+				if (obj instanceof PlayerShip)
+				{
+					ReduceLives();
+					if (playerLives > 0)
+					{						
+						SpawnPlayer();
+					}
+				}
+				else if (obj instanceof Missile)
+				{
+					if (((Missile)obj).GetType() == MissileType.PLAYER)
+					{
+						score += ((Missile)obj).GetScoreGained();
+					}
+				}
 				flagRemoval.remove(obj);
 			}
 		}
@@ -543,57 +536,6 @@ public class GameWorld extends Observable implements IGameWorld
 	} 
 	
 	/**
-	 * When called searches through the collection to find an instance of Asteroid
-	 * @return Reference to Asteroid location in collection if it exists, null otherwise.
-	 */
-	private Asteroid FindAsteroid()
-	{
-		IIterator iterator = collection.getIterator();
-		Asteroid temp = null;
-		while (iterator.hasNext())
-		{
-			Object curObj = iterator.getNext();
-			if (curObj instanceof Asteroid)
-			{
-				temp = (Asteroid) curObj;
-				break;
-			}
-		}
-		
-		if (temp == null) 
-		{
-			System.err.println("No asteroid has been spawned yet"); 
-			return null;
-		}
-		else { return temp; }
-	}
-	
-	/**
-	 * When called searches through the collection to find an instance of EnemyShip
-	 * @return Reference to EnemyShip location in collection if it exists, null otherwise.
-	 */
-	private EnemyShip FindEnemy()
-	{
-		IIterator iterator = collection.getIterator();
-		EnemyShip temp = null;
-		while (iterator.hasNext())
-		{
-			Object curObj = iterator.getNext();
-			if (curObj instanceof EnemyShip)
-			{
-				temp = (EnemyShip) curObj;
-				break;
-			}
-		}
-		
-		if (temp == null) 
-		{
-			System.err.println("No enemy ship has been spawned yet"); 
-			return null;
-		}
-		else { return temp; }
-	}
-	/**
 	 * When called searches through the collection to find an instance of EnemyShip similar to FindEnemy(),
 	 * the difference with this method, however, is that it searches for an EnemyShip with a missile count
 	 * over zero. Meant purely for firing missiles from enemy ship.
@@ -623,40 +565,6 @@ public class GameWorld extends Observable implements IGameWorld
 		if (temp == null) 
 		{
 			System.err.println("No enemy ship has been spawned yet or there are no ships with missiles to fire."); 
-			return null;
-		}
-		else { return temp; }
-	}
-	
-	/**
-	 * When called searches through the collection to find an instance of Missile based on passed type.
-	 * @param type - Determines the missile type to search for, either PLAYER or ENEMY
-	 * @return Reference to Missile location in collection if type matches, null otherwise
-	 */
-	private Missile FindMissile(MissileType type)
-	{
-		IIterator iterator = collection.getIterator();
-		Missile temp = null;
-		while (iterator.hasNext())
-		{
-			Object curObj = iterator.getNext();
-			if (curObj instanceof Missile)
-			{
-				temp = (Missile) curObj;
-				if (temp.GetType().equals(type))
-				{
-					break;					
-				}
-				else
-				{
-					temp = null;
-				}
-			}
-		}
-		
-		if (temp == null) 
-		{
-			System.err.println("No missile of type " + type.toString() + " has been spawned yet"); 
 			return null;
 		}
 		else { return temp; }

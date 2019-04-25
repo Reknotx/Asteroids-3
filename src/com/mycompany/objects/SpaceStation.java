@@ -2,14 +2,17 @@ package com.mycompany.objects;
 
 import com.codename1.ui.Graphics;
 import com.codename1.ui.geom.Point;
+import com.mycompany.interfaces.ICollider;
 import com.mycompany.interfaces.IDrawable;
 
-public class SpaceStation extends FixedGameObject implements IDrawable
+public class SpaceStation extends FixedGameObject implements ICollider, IDrawable
 {
 	private int thisId;
 	private int blinkRate;
 	private int timeSinceBlink;
 	private boolean lightsOn;
+	
+	private boolean collisionFlag = false;
 	
 	/**
 	 * Creates a fixed Space Station object that doesn't move
@@ -66,6 +69,30 @@ public class SpaceStation extends FixedGameObject implements IDrawable
 		{			
 			g.fillArc(xLoc, yLoc, 45, 30, 0, 360);
 		}
+	}
+
+	@Override
+	public boolean collidesWith(ICollider other)
+	{
+		return false;
+	}
+
+	@Override
+	public void handleCollision(ICollider other)
+	{
+		
+	}
+
+	@Override
+	public void setCollisionFlag()
+	{
+		collisionFlag = true;
+	}
+
+	@Override
+	public boolean getCollisionFlag()
+	{
+		return collisionFlag;
 	}
 	
 	public String toString()

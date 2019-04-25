@@ -68,6 +68,11 @@ public class Game extends Form  implements Runnable
 	public void run()
 	{
 		tickRun.actionPerformed(null);
+		
+		if (gw.getLives() == 0)
+		{
+			timer.cancel();
+		}
 	}
 	
 	private void SetUpCommands()

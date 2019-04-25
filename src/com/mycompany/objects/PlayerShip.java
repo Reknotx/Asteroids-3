@@ -5,6 +5,7 @@ import com.codename1.ui.geom.Point;
 import com.mycompany.interfaces.ICollider;
 import com.mycompany.interfaces.IDrawable;
 import com.mycompany.interfaces.ISteerable;
+import com.mycompany.objects.Missile.MissileType;
 
 public class PlayerShip extends Ship implements ICollider, IDrawable, ISteerable 
 {
@@ -21,6 +22,7 @@ public class PlayerShip extends Ship implements ICollider, IDrawable, ISteerable
 		SetSpeed(0);
 		SetDirection(0);
 		SetColor(0, 255, 255);
+		SetSize(30);
 	}
 	
 	/**
@@ -124,8 +126,8 @@ public class PlayerShip extends Ship implements ICollider, IDrawable, ISteerable
 		 * ships, or enemy missiles.
 		 */
 		boolean result = false;
-		double thisCenterX = this.GetFullLocation().getX() + (this.GetSize() / 2);
-		double thisCenterY = this.GetFullLocation().getY() + (this.GetSize() / 2);
+		double thisCenterX = this.GetFullLocation().getX();
+		double thisCenterY = this.GetFullLocation().getY();
 		
 		double otherCenterX = ((GameObject)other).GetFullLocation().getX() + (((GameObject)other).GetSize() / 2);
 		double otherCenterY = ((GameObject)other).GetFullLocation().getY() + (((GameObject)other).GetSize() / 2);
@@ -152,6 +154,20 @@ public class PlayerShip extends Ship implements ICollider, IDrawable, ISteerable
 		/*
 		 * If player collides with enemy entities decrease the lives here.
 		 */
+		if (other instanceof Asteroid || other instanceof EnemyShip)
+		{
+			this.setCollisionFlag();
+			other.setCollisionFlag();
+		}
+		else if (other instanceof Missile && ((Missile) other).GetType() == MissileType.ENEMY)
+		{
+			this.setCollisionFlag();
+			other.setCollisionFlag();
+		}
+		else if (other instanceof SpaceStation)
+		{
+			this.Reload();
+		}
 	}
 
 	@Override
