@@ -9,6 +9,12 @@ public abstract class GameObject
 	private Point2D location;
 	private int rgb;
 	
+	/*Added a new size variable to allow for all gameobjects to have a size assigned to them.
+	 * The purpose of the size is for more polymorphism in collision detection. Used to determine
+	 * the size of the bounding circle / rectangle around the object.
+	 */
+	private int size;
+	
 	/**
 	 * The base constructor for all game objects. Initializes location to (0.0, 0.0)
 	 */
@@ -83,8 +89,11 @@ public abstract class GameObject
 	 */
 	public void SetLocation(double x, double y)
 	{
-		location.setX(Math.round((x * 10.0)) / 10.0);
-		location.setY(Math.round((y * 10.0)) / 10.0);
+//		location.setX(Math.round((x * 10.0)) / 10.0);
+//		location.setY(Math.round((y * 10.0)) / 10.0);
+		
+		location.setX(x);
+		location.setY(y);
 	}
 	
 	/**
@@ -92,8 +101,11 @@ public abstract class GameObject
 	 */
 	public void SetLocation(Point2D loc)
 	{
-		location.setX(Math.round((loc.getX() * 10.0)) / 10.0);
-		location.setY(Math.round((loc.getY() * 10.0)) / 10.0);
+//		location.setX(Math.round((loc.getX() * 10.0)) / 10.0);
+//		location.setY(Math.round((loc.getY() * 10.0)) / 10.0);
+		
+		location.setX(loc.getX());
+		location.setY(loc.getY());
 	}
 	
 	/**
@@ -112,6 +124,16 @@ public abstract class GameObject
 		if (y > yMax) { y = yMax; }
 		
 		location = new Point2D(x, y);
+	}
+	
+	public int GetSize()
+	{
+		return size;
+	}
+	
+	public void SetSize(int size)
+	{
+		this.size = size;
 	}
 	
 	public String toString()

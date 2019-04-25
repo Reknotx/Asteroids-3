@@ -33,7 +33,7 @@ public class GameWorldProxy extends Observable implements IGameWorld
 	@Override
 	public int getTime() 
 	{
-		return gwp.getTime();
+		return gwp.getTime() / 1000;
 	}
 
 	@Override

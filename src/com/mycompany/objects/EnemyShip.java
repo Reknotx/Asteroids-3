@@ -7,8 +7,9 @@ import com.mycompany.interfaces.IDrawable;
 
 public class EnemyShip extends Ship implements ICollider, IDrawable
 {
-	private int size;
+	//private int size;
 	private MissileLauncher launcher;
+	private boolean collisionFlag = false;
 	
 	/**
 	 * Creates an enemy ship object in the world. Enemy ships have two sizes, small and large.
@@ -18,17 +19,17 @@ public class EnemyShip extends Ship implements ICollider, IDrawable
 	{
 		super(2);
 		launcher = new MissileLauncher(super.GetDirection());
-		size = (rng.nextInt(2) + 1) * 10;
+		SetSize((rng.nextInt(2) + 1) * 10);
 		SetColor(255, 0, 0);
 	}
 	
-	/**
-	 * @return integer value representing the size (10 = small / 20 = large)
-	 */
-	public int GetSize()
-	{
-		return size;
-	}
+//	/**
+//	 * @return integer value representing the size (10 = small / 20 = large)
+//	 */
+//	public int GetSize()
+//	{
+//		return size;
+//	}
 	
 	/**
 	 * 
@@ -47,9 +48,9 @@ public class EnemyShip extends Ship implements ICollider, IDrawable
 		int xLoc = (int)this.GetFullLocation().getX() + pCmpRelPrnt.getX();
 		int yLoc = (int)this.GetFullLocation().getY() + pCmpRelPrnt.getY();
 		
-		int[] xPoints = { xLoc, (xLoc - size), (xLoc + size), xLoc };
+		int[] xPoints = { xLoc, (xLoc - GetSize()), (xLoc + GetSize()), xLoc };
 		
-		int[] yPoints = { (yLoc + size), (yLoc - size), (yLoc - size), (yLoc + size) };
+		int[] yPoints = { (yLoc + GetSize()), (yLoc - GetSize()), (yLoc - GetSize()), (yLoc + GetSize()) };
 		
 		int nPoints = 4;
 		
@@ -58,9 +59,29 @@ public class EnemyShip extends Ship implements ICollider, IDrawable
 	}
 
 	@Override
-	public boolean collidesWith(ICollider other) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean collidesWith(ICollider other)
+	{
+		boolean result = false;
+		double thisCenterX = this.GetFullLocation().getX() + (this.GetSize() / 2);
+		double thisCenterY = this.GetFullLocation().getY() + (this.GetSize() / 2);
+		
+		double otherCenterX = ((GameObject)other).GetFullLocation().getX() + (((GameObject)other).GetSize() / 2);
+		double otherCenterY = ((GameObject)other).GetFullLocation().getY() + (((GameObject)other).GetSize() / 2);
+		
+		double dx = thisCenterX - otherCenterX;
+		double dy = thisCenterY - otherCenterY;
+		
+		double distBetweenCentersSqr = (dx * dx + dy * dy);
+		
+		// find square of sum of radii
+		int thisRadius= this.GetSize() / 2;
+		int otherRadius= ((GameObject)other).GetSize() / 2;
+		
+		int radiiSqr= (thisRadius * thisRadius + 2 * thisRadius * otherRadius + otherRadius * otherRadius);
+		
+		if (distBetweenCentersSqr <= radiiSqr) { result = true ; }
+		
+		return result;
 	}
 
 	@Override
@@ -68,11 +89,23 @@ public class EnemyShip extends Ship implements ICollider, IDrawable
 		// TODO Auto-generated method stub
 		
 	}	
+
+	@Override
+	public void setCollisionFlag()
+	{
+		collisionFlag = true;
+	}
+
+	@Override
+	public boolean getCollisionFlag()
+	{
+		return collisionFlag;
+	}
 	
 	public String toString()
 	{
 		String parentString = super.toString();
-		String thisString = " size = " + size;
+		String thisString = " size = " + GetSize();
 		return "Non-Player Ship: " + parentString + thisString;
 	}
 }

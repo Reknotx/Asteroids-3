@@ -12,6 +12,8 @@ public class Missile extends MoveableGameObject implements ICollider, IDrawable
 	private MissileType type;
 	private int fuelLevel;
 	
+	private boolean collisionFlag = false;
+	
 	/**
 	 * Missile that travels through world.
 	 * @param missileLauncherDir - The direction to fire the missile
@@ -21,7 +23,7 @@ public class Missile extends MoveableGameObject implements ICollider, IDrawable
 	 */
 	public Missile(int missileLauncherDir, int speed, Point2D loc, MissileType type)
 	{
-		fuelLevel = 10;
+		fuelLevel = 1000;
 		SetLocation(loc);
 		SetSpeed(speed);
 		SetDirection(missileLauncherDir);
@@ -70,23 +72,55 @@ public class Missile extends MoveableGameObject implements ICollider, IDrawable
 		int xLoc = (int)this.GetFullLocation().getX() + pCmpRelPrnt.getX();
 		int yLoc = (int)this.GetFullLocation().getY() + pCmpRelPrnt.getY();
 		
-		int width = 16;
-		int height = 24;
+		int width = 25;
+		int height = 25;
 		
 		g.drawRect((xLoc - (width / 2)), yLoc, width, height);
 		g.fillRect((xLoc - (width / 2)), yLoc, width, height);
 	}
 
 	@Override
-	public boolean collidesWith(ICollider other) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean collidesWith(ICollider other) 
+	{
+		boolean result = false;
+		double thisCenterX = this.GetFullLocation().getX() + (this.GetSize() / 2);
+		double thisCenterY = this.GetFullLocation().getY() + (this.GetSize() / 2);
+		
+		double otherCenterX = ((GameObject)other).GetFullLocation().getX() + (((GameObject)other).GetSize() / 2);
+		double otherCenterY = ((GameObject)other).GetFullLocation().getY() + (((GameObject)other).GetSize() / 2);
+		
+		double dx = thisCenterX - otherCenterX;
+		double dy = thisCenterY - otherCenterY;
+		
+		double distBetweenCentersSqr = (dx * dx + dy * dy);
+		
+		// find square of sum of radii
+		int thisRadius= this.GetSize() / 2;
+		int otherRadius= ((GameObject)other).GetSize() / 2;
+		
+		int radiiSqr= (thisRadius * thisRadius + 2 * thisRadius * otherRadius + otherRadius * otherRadius);
+		
+		if (distBetweenCentersSqr <= radiiSqr) { result = true ; }
+		
+		return result;
 	}
 
 	@Override
-	public void handleCollision(ICollider other) {
-		// TODO Auto-generated method stub
+	public void handleCollision(ICollider other)
+	{
 		
+	}
+
+	@Override
+	public void setCollisionFlag()
+	{
+		collisionFlag = true;
+	}
+
+	@Override
+	public boolean getCollisionFlag()
+	{
+		return collisionFlag;
 	}
 	
 	public String toString()

@@ -7,7 +7,8 @@ import com.mycompany.interfaces.IDrawable;
 
 public class Asteroid extends MoveableGameObject implements ICollider, IDrawable
 {
-	private int size = 0;
+	//private int size = 0;
+	private boolean collisionFlag = false;
 	
 	/**
 	 * Hazard that moves through space
@@ -15,16 +16,21 @@ public class Asteroid extends MoveableGameObject implements ICollider, IDrawable
 	public Asteroid()
 	{
 		SetColor(255, 255, 0);
-		this.size = rng.nextInt(25) + 6;
+		/*
+		 * Added more to the size of the asteroid so it appears nicely on screen.
+		 * Also so that it is easier to find the bounds so i don't have to make
+		 * janky stuff.
+		 */
+		SetSize(rng.nextInt(25) + 20);
 	}
 	
-	/**
-	 * @return The size of the asteroid
-	 */
-	public int GetSize()
-	{
-		return size;
-	}
+//	/**
+//	 * @return The size of the asteroid
+//	 */
+//	public int GetSize()
+//	{
+//		return size;
+//	}
 
 	@Override
 	public void draw(Graphics g, Point pCmpRelPrnt) 
@@ -34,43 +40,60 @@ public class Asteroid extends MoveableGameObject implements ICollider, IDrawable
 		int xLoc = (int)this.GetFullLocation().getX() + pCmpRelPrnt.getX();
 		int yLoc = (int)this.GetFullLocation().getY() + pCmpRelPrnt.getY();
 		
-		/*
-		 * Asteroid is drawn as a circle. However with collision detection the asteroid
-		 * will be the only circular object on the screen and will make differentiating
-		 * between bounding rectangle and bounding circle difficult. For the moment will
-		 * instead make it a square for more simplicity. Code retained for future reference.
-		 *	g.drawArc(xLoc, yLoc, (this.GetSize() + 13), (this.GetSize() + 13), 0, 360);
-		 *	g.fillArc(xLoc, yLoc, (this.GetSize() + 13), (this.GetSize() + 13), 0, 360);
-		 * 
-		 */
-		
-		g.drawRect(xLoc, yLoc, (this.GetSize() + 13), (this.GetSize() + 13));
-		g.fillRect(xLoc, yLoc, (this.GetSize() + 13), (this.GetSize() + 13));
+		g.drawArc(xLoc, yLoc, this.GetSize(), this.GetSize(), 0, 360);
+		g.fillArc(xLoc, yLoc, this.GetSize(), this.GetSize(), 0, 360);
+
 	}
 
 	@Override
-	public boolean collidesWith(ICollider other) 
+	public boolean collidesWith(ICollider other)
 	{
-		double thisCenterX = this.GetFullLocation().getX();
-		double thisCenterY = this.GetFullLocation().getY();
+		boolean result = false;
+		double thisCenterX = this.GetFullLocation().getX() + (this.GetSize() / 2);
+		double thisCenterY = this.GetFullLocation().getY() + (this.GetSize() / 2);
 		
-		double otherCenterX = ((GameObject)other).GetFullLocation().getX();
-		double otherCenterY = ((GameObject)other).GetFullLocation().getY();
+		double otherCenterX = ((GameObject)other).GetFullLocation().getX() + (((GameObject)other).GetSize() / 2);
+		double otherCenterY = ((GameObject)other).GetFullLocation().getY() + (((GameObject)other).GetSize() / 2);
 		
+		double dx = thisCenterX - otherCenterX;
+		double dy = thisCenterY - otherCenterY;
 		
-		return false;
+		double distBetweenCentersSqr = (dx * dx + dy * dy);
+		
+		// find square of sum of radii
+		int thisRadius= this.GetSize() / 2;
+		int otherRadius= ((GameObject)other).GetSize() / 2;
+		
+		int radiiSqr= (thisRadius * thisRadius + 2 * thisRadius * otherRadius + otherRadius * otherRadius);
+		
+		if (distBetweenCentersSqr <= radiiSqr) { result = true ; }
+		
+		return result;
 	}
 
 	@Override
 	public void handleCollision(ICollider other) 
 	{
-		
+		this.setCollisionFlag();
+		other.setCollisionFlag();
 	}
 
+	@Override
+	public void setCollisionFlag() 
+	{
+		collisionFlag = true;
+	}
+
+	@Override
+	public boolean getCollisionFlag() 
+	{
+		return collisionFlag;
+	}
+	
 	public String toString()
 	{
 		String parentString = super.toString();
-		String thisString = " size = " + size;
+		String thisString = " size = " + GetSize();
 		return "Asteroid: " + parentString + thisString;
 	}
 }

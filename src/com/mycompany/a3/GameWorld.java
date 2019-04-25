@@ -1,8 +1,10 @@
 package com.mycompany.a3;
 
+import java.util.ArrayList;
 import java.util.Observable;
 
 import com.codename1.ui.Dialog;
+import com.mycompany.interfaces.ICollider;
 import com.mycompany.interfaces.IGameWorld;
 import com.mycompany.interfaces.IIterator;
 import com.mycompany.interfaces.IMoveable;
@@ -418,7 +420,7 @@ public class GameWorld extends Observable implements IGameWorld
 		//Handles movement of objects in the world
 		while (iterator.hasNext())
 		{
-			Object obj = iterator.getNext();
+			GameObject obj = iterator.getNext();
 			if (obj instanceof IMoveable)
 			{
 				IMoveable moveObj = (IMoveable) obj;
@@ -439,16 +441,65 @@ public class GameWorld extends Observable implements IGameWorld
 			}
 		}
 		
-		//Time to re-evaluate the collection for collisions
+		CheckCollisions();
 		
-		iterator = collection.getIterator();
+		elapsedTime += 20;
+		InformObservers();
+	}
+	
+	/**
+	 * Runs through list to check for collisions after movements is made
+	 */
+	private void CheckCollisions()
+	{
+		//Time to re-evaluate the collection for collisions
+		ArrayList<GameObject> collisionList = new ArrayList<GameObject>();
+		
+		IIterator iterator = collection.getIterator();
 		while (iterator.hasNext())
 		{
-			
+			GameObject thisObj = iterator.getNext();
+			if (thisObj instanceof ICollider)
+			{
+				ICollider thisColliderObj = (ICollider) thisObj;
+				
+				IIterator otherIterator = collection.getIterator();
+				while (otherIterator.hasNext())
+				{
+					GameObject otherObj = otherIterator.getNext();
+					if (otherObj instanceof ICollider && !(thisObj.equals(otherObj)))
+					{
+						ICollider otherColliderObj = (ICollider) otherObj;
+						
+						if (thisColliderObj.collidesWith(otherColliderObj))
+						{
+							System.out.println("Collision");
+							thisColliderObj.handleCollision(otherColliderObj);
+
+						}
+					}
+				}
+			}
 		}
 		
-		elapsedTime++;
-		InformObservers();
+		RemoveFlaggedObjects();
+	}
+	
+	/**
+	 * Temporary removal system to remove collided objects
+	 */
+	private void RemoveFlaggedObjects()
+	{
+		IIterator flagRemoval = collection.getIterator();
+		
+		while(flagRemoval.hasNext())
+		{
+			GameObject obj = flagRemoval.getNext();
+			if (obj instanceof ICollider && ((ICollider)obj).getCollisionFlag())
+			{
+				flagRemoval.remove(obj);
+			}
+		}
 	}
 	
 	/**

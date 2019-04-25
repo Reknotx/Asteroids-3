@@ -9,6 +9,7 @@ import com.mycompany.interfaces.ISteerable;
 public class PlayerShip extends Ship implements ICollider, IDrawable, ISteerable 
 {
 	private MissileLauncher launcher;
+	private boolean collisionFlag = false;
 	
 	/**
 	 * The player ship that the user will control
@@ -105,9 +106,9 @@ public class PlayerShip extends Ship implements ICollider, IDrawable, ISteerable
 		int xLoc = (int)this.GetFullLocation().getX() + pCmpRelPrnt.getX();
 		int yLoc = (int)this.GetFullLocation().getY() + pCmpRelPrnt.getY();
 		
-		int[] xPoints = { xLoc, (xLoc - 15), (xLoc + 15), xLoc };
+		int[] xPoints = { xLoc, (xLoc - 20), (xLoc + 20), xLoc };
 		
-		int[] yPoints = { (yLoc + 15), (yLoc - 15), (yLoc - 15), (yLoc + 15) };
+		int[] yPoints = { (yLoc + 30), (yLoc - 30), (yLoc - 30), (yLoc + 30) };
 		
 		int nPoints = 4;
 		
@@ -118,13 +119,51 @@ public class PlayerShip extends Ship implements ICollider, IDrawable, ISteerable
 	@Override
 	public boolean collidesWith(ICollider other)
 	{
-		return false;
+		/*
+		 * Testing to see if the player collides with any asteroids, enemy
+		 * ships, or enemy missiles.
+		 */
+		boolean result = false;
+		double thisCenterX = this.GetFullLocation().getX() + (this.GetSize() / 2);
+		double thisCenterY = this.GetFullLocation().getY() + (this.GetSize() / 2);
+		
+		double otherCenterX = ((GameObject)other).GetFullLocation().getX() + (((GameObject)other).GetSize() / 2);
+		double otherCenterY = ((GameObject)other).GetFullLocation().getY() + (((GameObject)other).GetSize() / 2);
+		
+		double dx = thisCenterX - otherCenterX;
+		double dy = thisCenterY - otherCenterY;
+		
+		double distBetweenCentersSqr = (dx * dx + dy * dy);
+		
+		// find square of sum of radii
+		int thisRadius= this.GetSize() / 2;
+		int otherRadius= ((GameObject)other).GetSize() / 2;
+		
+		int radiiSqr= (thisRadius * thisRadius + 2 * thisRadius * otherRadius + otherRadius * otherRadius);
+		
+		if (distBetweenCentersSqr <= radiiSqr) { result = true ; }
+		
+		return result;
 	}
 
 	@Override
 	public void handleCollision(ICollider other)
 	{
-		
+		/*
+		 * If player collides with enemy entities decrease the lives here.
+		 */
+	}
+
+	@Override
+	public void setCollisionFlag()
+	{
+		collisionFlag = true;
+	}
+
+	@Override
+	public boolean getCollisionFlag()
+	{
+		return collisionFlag;
 	}
 	
 	public String toString()

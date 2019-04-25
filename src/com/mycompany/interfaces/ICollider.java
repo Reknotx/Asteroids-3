@@ -1,7 +1,7 @@
 package com.mycompany.interfaces;
 
 public interface ICollider 
-{
+{	
 	/**
 	 * Determines with two objects collide with each other. 
 	 * 
@@ -23,4 +23,8 @@ public interface ICollider
 	 * @param other - The secondary object to collide with.
 	 */
 	public void handleCollision(ICollider other);
+	
+	public void setCollisionFlag();
+	
+	public boolean getCollisionFlag();
 }

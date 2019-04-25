@@ -61,7 +61,7 @@ public class Game extends Form  implements Runnable
 		
 		tickRun = new TickCmd(gw);
 		
-		//timer.schedule(20, true, this);
+		timer.schedule(20, true, this);
 	}
 	
 	@Override
