@@ -2,7 +2,6 @@ package com.mycompany.a3;
 import com.codename1.ui.CheckBox;
 import com.codename1.ui.Container;
 import com.codename1.ui.Form;
-import com.codename1.ui.Label;
 import com.codename1.ui.Toolbar;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
@@ -158,13 +157,6 @@ public class Game extends Form  implements Runnable
 		addKeyListener('j', jumpCMD);
 		buttonContainer.add(jump);
 		/* Jump button */
-		
-		/* Reload button */
-		ReloadCmd reloadCMD = new ReloadCmd(gw);
-		GameButton reload = new GameButton(reloadCMD);
-		addKeyListener('r', reloadCMD);
-		buttonContainer.add(reload);
-		/* Reload button */
 		
 		//Sets the size of the map view container so that it fills in the remaining leftover space properly
 		

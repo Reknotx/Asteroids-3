@@ -37,23 +37,24 @@ public class Asteroid extends MoveableGameObject implements ICollider, IDrawable
 	{
 		g.setColor(this.GetColor());
 			
-		int xLoc = (int)this.GetFullLocation().getX() + pCmpRelPrnt.getX();
-		int yLoc = (int)this.GetFullLocation().getY() + pCmpRelPrnt.getY();
+		int xLoc = (int)this.GetFullLocation().getX() + pCmpRelPrnt.getX() - (GetSize() / 2);
+		int yLoc = (int)this.GetFullLocation().getY() + pCmpRelPrnt.getY() - (GetSize() / 2);
 		
 		g.drawArc(xLoc, yLoc, this.GetSize(), this.GetSize(), 0, 360);
 		g.fillArc(xLoc, yLoc, this.GetSize(), this.GetSize(), 0, 360);
 
 	}
 
+	//IS THIS RIGHT?! DRAW A CIRCLE TO VISUALIZE THE BOUNDING CIRCLE
 	@Override
 	public boolean collidesWith(ICollider other)
 	{
 		boolean result = false;
-		double thisCenterX = this.GetFullLocation().getX() + (this.GetSize() / 2);
-		double thisCenterY = this.GetFullLocation().getY() + (this.GetSize() / 2);
+		double thisCenterX = this.GetFullLocation().getX();
+		double thisCenterY = this.GetFullLocation().getY();
 		
-		double otherCenterX = ((GameObject)other).GetFullLocation().getX() + (((GameObject)other).GetSize() / 2);
-		double otherCenterY = ((GameObject)other).GetFullLocation().getY() + (((GameObject)other).GetSize() / 2);
+		double otherCenterX = ((GameObject)other).GetFullLocation().getX();
+		double otherCenterY = ((GameObject)other).GetFullLocation().getY();
 		
 		double dx = thisCenterX - otherCenterX;
 		double dy = thisCenterY - otherCenterY;
@@ -74,10 +75,11 @@ public class Asteroid extends MoveableGameObject implements ICollider, IDrawable
 	@Override
 	public void handleCollision(ICollider other) 
 	{
-		
-		this.setCollisionFlag();
-		other.setCollisionFlag();
-		
+		if (!(other instanceof SpaceStation))
+		{
+			this.setCollisionFlag();
+			other.setCollisionFlag();
+		}
 	}
 
 	@Override

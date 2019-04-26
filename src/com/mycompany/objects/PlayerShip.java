@@ -12,6 +12,8 @@ public class PlayerShip extends Ship implements ICollider, IDrawable, ISteerable
 	private MissileLauncher launcher;
 	private boolean collisionFlag = false;
 	
+	private final int MAX_MISSILE_COUNT = 10;
+	
 	/**
 	 * The player ship that the user will control
 	 */
@@ -39,7 +41,7 @@ public class PlayerShip extends Ship implements ICollider, IDrawable, ISteerable
 	 */
 	public void Reload()
 	{
-		super.SetMissileCount(10);
+		super.SetMissileCount(MAX_MISSILE_COUNT);
 	}
 	
 	/**
@@ -166,7 +168,7 @@ public class PlayerShip extends Ship implements ICollider, IDrawable, ISteerable
 		}
 		else if (other instanceof SpaceStation)
 		{
-			this.Reload();
+			Reload();
 		}
 	}
 

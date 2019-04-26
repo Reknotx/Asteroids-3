@@ -7,11 +7,13 @@ import com.mycompany.interfaces.IDrawable;
 
 public class SpaceStation extends FixedGameObject implements ICollider, IDrawable
 {
+	private final int SPACE_STATION_WIDTH = 46;
+	private final int SPACE_STATION_HEIGHT = 30;
+	
 	private int thisId;
 	private int blinkRate;
 	private int timeSinceBlink;
 	private boolean lightsOn;
-	
 	private boolean collisionFlag = false;
 	
 	/**
@@ -23,7 +25,8 @@ public class SpaceStation extends FixedGameObject implements ICollider, IDrawabl
 		blinkRate = rng.nextInt(4) + 1;
 		lightsOn = true;
 		timeSinceBlink = 0;
-		SetColor(255, 0, 255);	
+		SetColor(255, 0, 255);
+		SetSize(50);
 	}
 	
 	/**
@@ -60,14 +63,14 @@ public class SpaceStation extends FixedGameObject implements ICollider, IDrawabl
 	{
 		g.setColor(this.GetColor());
 
-		int xLoc = (int)this.GetFullLocation().getX() + pCmpRelPrnt.getX();
-		int yLoc = (int)this.GetFullLocation().getY() + pCmpRelPrnt.getY();
+		int xLoc = (int)this.GetFullLocation().getX() + pCmpRelPrnt.getX() - (SPACE_STATION_WIDTH / 2);
+		int yLoc = (int)this.GetFullLocation().getY() + pCmpRelPrnt.getY() - (SPACE_STATION_HEIGHT / 2);
 		
-		g.drawArc(xLoc, yLoc, 45, 30, 0, 360);
+		g.drawArc(xLoc, yLoc, SPACE_STATION_WIDTH, SPACE_STATION_HEIGHT, 0, 360);
 		
 		if (lightsOn)
 		{			
-			g.fillArc(xLoc, yLoc, 45, 30, 0, 360);
+			g.fillArc(xLoc, yLoc, SPACE_STATION_WIDTH, SPACE_STATION_HEIGHT, 0, 360);
 		}
 	}
 

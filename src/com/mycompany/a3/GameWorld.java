@@ -95,7 +95,7 @@ public class GameWorld extends Observable implements IGameWorld
 		if (!FindInstanceOfPlayer())
 		{
 			PlayerShip player = new PlayerShip();			
-			missileCount = 10;
+			missileCount = player.GetMissileCount();
 			collection.add(player);
 			player.SetLocation(mapWidth / 2, mapHeight / 2);
 			InformObservers();
@@ -191,8 +191,8 @@ public class GameWorld extends Observable implements IGameWorld
 			{				
 				Missile missile = new Missile(playerObj.GetLauncherDir(), playerObj.GetSpeed() + 5, playerObj.GetFullLocation(), MissileType.PLAYER);
 				collection.add(missile);
-				missileCount--;
 				playerObj.Fire();
+				missileCount = playerObj.GetMissileCount();
 			}
 			else
 			{
@@ -204,6 +204,8 @@ public class GameWorld extends Observable implements IGameWorld
 	
 	/**
 	 * Fires a missile from Enemy Ship if one exists with missiles to fire.
+	 * 
+	 * obsolete?
 	 */
 	public void FireEnemymissile()
 	{
@@ -231,158 +233,6 @@ public class GameWorld extends Observable implements IGameWorld
 		{
 			playerObj.ResetPosition(mapWidth / 2.0, mapHeight / 2.0);
 			InformObservers();
-		}
-	}
-	
-	/**
-	 * Reload the player with more missiles up to max.
-	 */
-	public void ReloadMissiles()
-	{
-		//Reset missile count to 10
-		PlayerShip playerObj = FindPlayer();
-		SpaceStation stationObj = FindStation();
-		if (playerObj != null && stationObj != null) 
-		{ 
-			playerObj.Reload();
-			missileCount = 10;
-			InformObservers();
-		}
-	}
-	
-	/**
-	 * Used to destroy asteroids and enemy ships with missiles depending on the command.
-	 * Will also increment the player score based on predetermined values depending on
-	 * the enemy as well.
-	 * @param entity - entity as listed in the EntityType enumeration. Select either asteroid or enemy ship
-	 */
-	public void DestroyEnemy(EntityType entity)
-	{
-		//Destroy asteroid or enemy ship with player missile
-		//increment score based on which enemy was destroyed
-		switch (entity)
-		{
-			case ASTEROID:
-				score += 10;
-				break;
-				
-			case ENEMY:
-				score += 20;
-				break;
-				
-			default:
-				System.err.println("Wrong enemy selected");
-		}
-		
-		InformObservers();
-	}
-	
-	/**
-	 * Destroys the player with an enemy missile if there is an instance of both.
-	 */
-	public void KillPlayerWithEnemyMissile()
-	{
-		
-		PlayerShip playerObj = FindPlayer();
-		if (playerObj != null)
-		{
-			ReduceLives();
-			InformObservers();
-		}
-	}
-	
-	/**
-	 * Handles all collision variations within the game world.
-	 * 	- Player crashes into asteroid
-	 *  - Player crashes into enemy ship
-	 *  - Two asteroids collide together
-	 *  - Asteroid collides with enemy ship
-	 * @param entityOne - Determines collider, must be of type PLAYER or type ASTEROID
-	 * @param entityTwo - Determines collidee, must be of type ASTEROID or type ENEMY
-	 */
-	public void Collision(EntityType entityOne, EntityType entityTwo)
-	{
-		//When two entities collide perform necessary actions based on 
-		//what happened.
-		/* Variations of collisions
-		 * 	- Player crashes into asteroid
-		 *  - Player crashes into enemy ship
-		 *  - Two asteroids collide with each other
-		 *  - Asteroid collides with enemy ship 
-		 */
-		GameObject objectOne = null;
-		GameObject objectTwo = null;
-		IIterator iterator = collection.getIterator();
-		if (entityOne != null && entityTwo != null)
-		{
-			switch (entityOne)
-			{
-				case PLAYER:
-					objectOne = FindPlayer();
-					break;
-					
-				case ASTEROID:
-					break;
-					
-				default:
-					System.err.println("Poor value passed");
-					break;
-			}
-			
-			if (objectOne != null)
-			{
-				switch (entityTwo)
-				{
-					case ASTEROID:
-						while (iterator.hasNext())
-						{
-							Object curObj = iterator.getNext();
-							if (curObj instanceof Asteroid)
-							{
-								objectTwo = (Asteroid) curObj;
-								if (!objectTwo.equals(objectOne))
-								{
-									break;									
-								}
-								else
-								{
-									objectTwo = null;
-								}
-								
-							}
-						}
-						break;
-						
-					case ENEMY:
-						break;
-						
-					default:
-						System.err.println("Poor value passed");
-						break;
-				}
-				
-				if (objectTwo != null)
-				{
-					if (objectOne instanceof PlayerShip)
-					{
-						ReduceLives();
-					}
-					InformObservers();
-				}
-				else
-				{
-					System.err.println("No instance of " + entityTwo);
-				}
-			}
-			else
-			{
-				System.err.println("No instance of " + entityOne);
-			}
-		}
-		else
-		{
-			System.err.println("A value of null was passed to method");
-			System.err.println("Entity one = " + entityOne + "\nEntity two = " + entityTwo);
 		}
 	}
 	
@@ -475,6 +325,7 @@ public class GameWorld extends Observable implements IGameWorld
 			GameObject obj = flagRemoval.getNext();
 			if (obj instanceof ICollider && ((ICollider)obj).getCollisionFlag())
 			{
+				flagRemoval.remove(obj);
 				if (obj instanceof PlayerShip)
 				{
 					ReduceLives();
@@ -490,7 +341,6 @@ public class GameWorld extends Observable implements IGameWorld
 						score += ((Missile)obj).GetScoreGained();
 					}
 				}
-				flagRemoval.remove(obj);
 			}
 		}
 	}
@@ -565,32 +415,6 @@ public class GameWorld extends Observable implements IGameWorld
 		if (temp == null) 
 		{
 			System.err.println("No enemy ship has been spawned yet or there are no ships with missiles to fire."); 
-			return null;
-		}
-		else { return temp; }
-	}
-	
-	/**
-	 * When called searches through the collection to find an instance of SpaceStation.
-	 * @return Reference to the Station location in collection if one exists, null otherwise
-	 */
-	private SpaceStation FindStation()
-	{
-		IIterator iterator = collection.getIterator();
-		SpaceStation temp = null;
-		while (iterator.hasNext())
-		{
-			Object curObj = iterator.getNext();
-			if (curObj instanceof SpaceStation)
-			{
-				temp = (SpaceStation) curObj;
-				break;
-			}
-		}
-		
-		if (temp == null) 
-		{
-			System.err.println("No space station has been spawned yet"); 
 			return null;
 		}
 		else { return temp; }

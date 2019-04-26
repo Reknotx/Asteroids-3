@@ -8,7 +8,6 @@ import com.codename1.ui.Container;
 import com.codename1.ui.Label;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.FlowLayout;
-import com.mycompany.a3.GameWorldProxy;
 import com.mycompany.interfaces.IGameWorld;
 
 //View in MVC architecture
