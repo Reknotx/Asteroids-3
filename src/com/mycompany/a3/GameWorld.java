@@ -249,10 +249,11 @@ public class GameWorld extends Observable implements IGameWorld
 			if (obj instanceof IMoveable)
 			{
 				IMoveable moveObj = (IMoveable) obj;
-				moveObj.Move();
+				moveObj.Move(mapWidth, mapHeight);
 				if (moveObj instanceof Missile)
 				{
 					Missile missileObj = (Missile) moveObj;
+					missileObj.DecreaseFuel();
 					if (missileObj.GetFuel() == 0)
 					{
 						iterator.remove();

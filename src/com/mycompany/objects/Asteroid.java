@@ -36,7 +36,18 @@ public class Asteroid extends MoveableGameObject implements ICollider, IDrawable
 	public void draw(Graphics g, Point pCmpRelPrnt) 
 	{
 		g.setColor(this.GetColor());
-			
+		
+		/*Obtains the location of the object in the game world, then adds the relative origin location
+		 * of mapview to it. Finally subtract half of the size so that the arc is drawn in the correct
+		 * location relative to the actual location of the object.
+		 * 
+		 * xLoc and yLoc are NOT the actual locations of the objects themselves but are instead the
+		 * locations for drawing purposes ONLY. Arcs are drawn with the x coordinate representing
+		 * where the top left corner is located at and draws from there.
+		 * 
+		 * This is correct.
+		 * 
+		 */
 		int xLoc = (int)this.GetFullLocation().getX() + pCmpRelPrnt.getX() - (GetSize() / 2);
 		int yLoc = (int)this.GetFullLocation().getY() + pCmpRelPrnt.getY() - (GetSize() / 2);
 		

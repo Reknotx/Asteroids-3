@@ -61,6 +61,8 @@ public class SpaceStation extends FixedGameObject implements ICollider, IDrawabl
 	@Override
 	public void draw(Graphics g, Point pCmpRelPrnt) 
 	{
+		//This is correct
+		
 		g.setColor(this.GetColor());
 
 		int xLoc = (int)this.GetFullLocation().getX() + pCmpRelPrnt.getX() - (SPACE_STATION_WIDTH / 2);

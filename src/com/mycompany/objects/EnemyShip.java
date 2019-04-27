@@ -43,6 +43,9 @@ public class EnemyShip extends Ship implements ICollider, IDrawable
 	@Override
 	public void draw(Graphics g, Point pCmpRelPrnt) 
 	{
+		
+		//This is correct
+		
 		g.setColor(this.GetColor());
 		
 		int xLoc = (int)this.GetFullLocation().getX() + pCmpRelPrnt.getX();

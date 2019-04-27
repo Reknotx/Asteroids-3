@@ -8,6 +8,8 @@ import com.mycompany.interfaces.IDrawable;
 
 public class Missile extends MoveableGameObject implements ICollider, IDrawable
 {
+	private final int MISSILE_SIZE = 25;
+	
 	public enum MissileType { PLAYER, ENEMY }
 	private MissileType type;
 	private int fuelLevel;
@@ -25,6 +27,9 @@ public class Missile extends MoveableGameObject implements ICollider, IDrawable
 	 */
 	public Missile(int missileLauncherDir, int speed, Point2D loc, MissileType type)
 	{
+		//Currently spawns the missile on the player's location, needs to change to be fired
+		//closer to the end of the missile launcher, will deal with at later time.
+		
 		fuelLevel = 1000;
 		SetLocation(loc);
 		SetSpeed(speed);
@@ -64,11 +69,9 @@ public class Missile extends MoveableGameObject implements ICollider, IDrawable
 		return scoreGained;
 	}
 
-	@Override
-	public void Move() 
+	public void DecreaseFuel() 
 	{
 		fuelLevel--;
-		super.Move();
 	}
 
 	@Override
@@ -76,14 +79,11 @@ public class Missile extends MoveableGameObject implements ICollider, IDrawable
 	{
 		g.setColor(this.GetColor());
 		
-		int xLoc = (int)this.GetFullLocation().getX() + pCmpRelPrnt.getX();
-		int yLoc = (int)this.GetFullLocation().getY() + pCmpRelPrnt.getY();
+		int xLoc = (int)this.GetFullLocation().getX() + pCmpRelPrnt.getX() - (MISSILE_SIZE / 2);
+		int yLoc = (int)this.GetFullLocation().getY() + pCmpRelPrnt.getY() - (MISSILE_SIZE / 2);
 		
-		int width = 25;
-		int height = 25;
-		
-		g.drawRect((xLoc - (width / 2)), yLoc, width, height);
-		g.fillRect((xLoc - (width / 2)), yLoc, width, height);
+		g.drawRect(xLoc, yLoc, MISSILE_SIZE, MISSILE_SIZE);
+		g.fillRect(xLoc, yLoc, MISSILE_SIZE, MISSILE_SIZE);
 	}
 
 	@Override

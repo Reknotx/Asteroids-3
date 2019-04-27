@@ -105,6 +105,9 @@ public class PlayerShip extends Ship implements ICollider, IDrawable, ISteerable
 	@Override
 	public void draw(Graphics g, Point pCmpRelPrnt) 
 	{
+		
+		//This is correct
+		
 		g.setColor(this.GetColor());
 		
 		int xLoc = (int)this.GetFullLocation().getX() + pCmpRelPrnt.getX();
