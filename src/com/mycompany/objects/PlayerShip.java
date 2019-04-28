@@ -131,11 +131,12 @@ public class PlayerShip extends Ship implements ICollider, IDrawable, ISteerable
 		 * ships, or enemy missiles.
 		 */
 		boolean result = false;
+		
 		double thisCenterX = this.GetFullLocation().getX();
 		double thisCenterY = this.GetFullLocation().getY();
 		
-		double otherCenterX = ((GameObject)other).GetFullLocation().getX() + (((GameObject)other).GetSize() / 2);
-		double otherCenterY = ((GameObject)other).GetFullLocation().getY() + (((GameObject)other).GetSize() / 2);
+		double otherCenterX = ((GameObject)other).GetFullLocation().getX();
+		double otherCenterY = ((GameObject)other).GetFullLocation().getY();
 		
 		double dx = thisCenterX - otherCenterX;
 		double dy = thisCenterY - otherCenterY;
@@ -159,19 +160,10 @@ public class PlayerShip extends Ship implements ICollider, IDrawable, ISteerable
 		/*
 		 * If player collides with enemy entities decrease the lives here.
 		 */
-		if (other instanceof Asteroid || other instanceof EnemyShip)
+		if ((other instanceof Asteroid || other instanceof EnemyShip) || (other instanceof Missile && ((Missile)other).GetType() == MissileType.ENEMY))
 		{
 			this.setCollisionFlag();
 			other.setCollisionFlag();
-		}
-		else if (other instanceof Missile && ((Missile) other).GetType() == MissileType.ENEMY)
-		{
-			this.setCollisionFlag();
-			other.setCollisionFlag();
-		}
-		else if (other instanceof SpaceStation)
-		{
-			Reload();
 		}
 	}
 

@@ -26,6 +26,8 @@ public class MapView extends Container implements Observer
 	{
 		this.getAllStyles().setBorder(Border.createLineBorder(2, ColorUtil.GREEN));
 		this.setLayout(new BorderLayout());
+		this.getAllStyles().setBgColor(ColorUtil.BLACK);
+		this.getAllStyles().setBgTransparency(255);
 	}
 
 	@Override

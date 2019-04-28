@@ -68,8 +68,8 @@ public class EnemyShip extends Ship implements ICollider, IDrawable
 		double thisCenterX = this.GetFullLocation().getX();
 		double thisCenterY = this.GetFullLocation().getY();
 		
-		double otherCenterX = ((GameObject)other).GetFullLocation().getX() + (((GameObject)other).GetSize() / 2);
-		double otherCenterY = ((GameObject)other).GetFullLocation().getY() + (((GameObject)other).GetSize() / 2);
+		double otherCenterX = ((GameObject)other).GetFullLocation().getX();
+		double otherCenterY = ((GameObject)other).GetFullLocation().getY();
 		
 		double dx = thisCenterX - otherCenterX;
 		double dy = thisCenterY - otherCenterY;

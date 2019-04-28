@@ -12,11 +12,13 @@ public class Missile extends MoveableGameObject implements ICollider, IDrawable
 	
 	public enum MissileType { PLAYER, ENEMY }
 	private MissileType type;
-	private int fuelLevel;
-	
-	private boolean collisionFlag = false;
 	private GameObject shotObject = null;
+
+	private boolean collisionFlag = false;
+
+	private int fuelLevel;
 	private int scoreGained = 0;
+	private int timeElapsed = 0;
 	
 	/**
 	 * Missile that travels through world.
@@ -30,7 +32,7 @@ public class Missile extends MoveableGameObject implements ICollider, IDrawable
 		//Currently spawns the missile on the player's location, needs to change to be fired
 		//closer to the end of the missile launcher, will deal with at later time.
 		
-		fuelLevel = 1000;
+		fuelLevel = 100;
 		SetLocation(loc);
 		SetSpeed(speed);
 		SetDirection(missileLauncherDir);
@@ -90,11 +92,11 @@ public class Missile extends MoveableGameObject implements ICollider, IDrawable
 	public boolean collidesWith(ICollider other) 
 	{
 		boolean result = false;
-		double thisCenterX = this.GetFullLocation().getX() + (this.GetSize() / 2);
-		double thisCenterY = this.GetFullLocation().getY() + (this.GetSize() / 2);
+		double thisCenterX = this.GetFullLocation().getX();
+		double thisCenterY = this.GetFullLocation().getY();
 		
-		double otherCenterX = ((GameObject)other).GetFullLocation().getX() + (((GameObject)other).GetSize() / 2);
-		double otherCenterY = ((GameObject)other).GetFullLocation().getY() + (((GameObject)other).GetSize() / 2);
+		double otherCenterX = ((GameObject)other).GetFullLocation().getX();
+		double otherCenterY = ((GameObject)other).GetFullLocation().getY();
 		
 		double dx = thisCenterX - otherCenterX;
 		double dy = thisCenterY - otherCenterY;

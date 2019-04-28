@@ -1,6 +1,5 @@
 package com.mycompany.a3;
 
-import java.util.ArrayList;
 import java.util.Observable;
 
 import com.codename1.ui.Dialog;
@@ -239,7 +238,7 @@ public class GameWorld extends Observable implements IGameWorld
 	/**
 	 * Advance the game forward by one frame
 	 */
-	public void AdvanceGameClock()
+	public void AdvanceGameClock(int elapsedTime)
 	{
 		IIterator iterator = collection.getIterator();
 		//Handles movement of objects in the world
@@ -263,7 +262,7 @@ public class GameWorld extends Observable implements IGameWorld
 			else if (obj instanceof SpaceStation)
 			{
 				SpaceStation stationObj = (SpaceStation) obj;
-				if (elapsedTime % 1000 == 0)
+				if (this.elapsedTime % 1000 == 0)
 				{					
 					stationObj.IncreaseBlinkTime();
 				}
@@ -272,7 +271,7 @@ public class GameWorld extends Observable implements IGameWorld
 		
 		CheckCollisions();
 		
-		elapsedTime += 20;
+		this.elapsedTime += elapsedTime;
 		InformObservers();
 	}
 	
@@ -282,7 +281,6 @@ public class GameWorld extends Observable implements IGameWorld
 	private void CheckCollisions()
 	{
 		//Time to re-evaluate the collection for collisions
-		ArrayList<GameObject> collisionList = new ArrayList<GameObject>();
 		
 		IIterator iterator = collection.getIterator();
 		while (iterator.hasNext())

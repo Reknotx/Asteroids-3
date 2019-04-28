@@ -9,12 +9,16 @@ public class SpaceStation extends FixedGameObject implements ICollider, IDrawabl
 {
 	private final int SPACE_STATION_WIDTH = 46;
 	private final int SPACE_STATION_HEIGHT = 30;
+	private final int TIME_TILL_NEXT_RELOAD = 5;
 	
 	private int thisId;
 	private int blinkRate;
 	private int timeSinceBlink;
+	private int reloadDelay = 0;
+	
 	private boolean lightsOn;
 	private boolean collisionFlag = false;
+	private boolean reloadAvailable = true;
 	
 	/**
 	 * Creates a fixed Space Station object that doesn't move
@@ -47,6 +51,10 @@ public class SpaceStation extends FixedGameObject implements ICollider, IDrawabl
 	
 	/**
 	 * Increases the counter since the last blink of the lights, turning on and off, resets to zero when toggle
+	 * 
+	 * Also has the side effect of increasing the counter to the next available reload for this space station
+	 * if the space station had recently reloaded the player ship. Helps to avoid repeated spamming of reload 
+	 * on player.
 	 */
 	public void IncreaseBlinkTime()
 	{
@@ -55,6 +63,20 @@ public class SpaceStation extends FixedGameObject implements ICollider, IDrawabl
 		{
 			lightsOn = !lightsOn;
 			timeSinceBlink = 0;
+		}
+
+		if (!reloadAvailable)
+		{
+			IncreaseReloadDelayTime();
+		}
+	}
+	
+	private void IncreaseReloadDelayTime()
+	{
+		reloadDelay++;
+		if (reloadDelay == TIME_TILL_NEXT_RELOAD)
+		{
+			reloadAvailable = true;
 		}
 	}
 
@@ -70,7 +92,7 @@ public class SpaceStation extends FixedGameObject implements ICollider, IDrawabl
 		
 		g.drawArc(xLoc, yLoc, SPACE_STATION_WIDTH, SPACE_STATION_HEIGHT, 0, 360);
 		
-		if (lightsOn)
+		if (lightsOn && reloadAvailable)
 		{			
 			g.fillArc(xLoc, yLoc, SPACE_STATION_WIDTH, SPACE_STATION_HEIGHT, 0, 360);
 		}
@@ -79,13 +101,39 @@ public class SpaceStation extends FixedGameObject implements ICollider, IDrawabl
 	@Override
 	public boolean collidesWith(ICollider other)
 	{
-		return false;
+		boolean result = false;
+		
+		double thisCenterX = this.GetFullLocation().getX();
+		double thisCenterY = this.GetFullLocation().getY();
+		
+		double otherCenterX = ((GameObject)other).GetFullLocation().getX();
+		double otherCenterY = ((GameObject)other).GetFullLocation().getY();
+		
+		double dx = thisCenterX - otherCenterX;
+		double dy = thisCenterY - otherCenterY;
+		
+		double distBetweenCentersSqr = (dx * dx + dy * dy);
+		
+		// find square of sum of radii
+		int thisRadius= this.GetSize() / 2;
+		int otherRadius= ((GameObject)other).GetSize() / 2;
+		
+		int radiiSqr= (thisRadius * thisRadius + 2 * thisRadius * otherRadius + otherRadius * otherRadius);
+		
+		if (distBetweenCentersSqr <= radiiSqr) { result = true ; }
+		
+		return result;		
 	}
 
 	@Override
 	public void handleCollision(ICollider other)
 	{
-		
+		if (other instanceof PlayerShip && reloadAvailable)
+		{
+			((PlayerShip) other).Reload();
+			reloadAvailable = false;
+			reloadDelay = 0;
+		}
 	}
 
 	@Override

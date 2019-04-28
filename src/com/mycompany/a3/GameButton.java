@@ -17,8 +17,8 @@ public class GameButton extends Button
 		this.getAllStyles().setBorder(Border.createBevelRaised());
 		this.getAllStyles().setBorder(Border.createBevelLowered());
 		this.getAllStyles().setBorder(Border.createDoubleBorder(2, ColorUtil.BLACK	));
-  		this.getAllStyles().setMargin(TOP, 1);
-  		this.getAllStyles().setMargin(BOTTOM, 1);
+//  		this.getAllStyles().setMargin(TOP, 2);
+  		this.getAllStyles().setMargin(BOTTOM, 4);
   		
 		this.getUnselectedStyle().setBgColor(ColorUtil.rgb(0, 150, 150));
 		this.getUnselectedStyle().setFgColor(ColorUtil.BLUE);
