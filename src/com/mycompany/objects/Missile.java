@@ -5,9 +5,11 @@ import com.codename1.ui.geom.Point;
 import com.codename1.ui.geom.Point2D;
 import com.mycompany.interfaces.ICollider;
 import com.mycompany.interfaces.IDrawable;
+import com.mycompany.interfaces.ISelectable;
 
-public class Missile extends MoveableGameObject implements ICollider, IDrawable
+public class Missile extends MoveableGameObject implements ICollider, IDrawable, ISelectable
 {
+	private final int MISSILE_FUEL = 100;
 	private final int MISSILE_SIZE = 25;
 	
 	public enum MissileType { PLAYER, ENEMY }
@@ -15,6 +17,7 @@ public class Missile extends MoveableGameObject implements ICollider, IDrawable
 	private GameObject shotObject = null;
 
 	private boolean collisionFlag = false;
+	private boolean selected = false;
 
 	private int fuelLevel;
 	private int scoreGained = 0;
@@ -32,10 +35,11 @@ public class Missile extends MoveableGameObject implements ICollider, IDrawable
 		//Currently spawns the missile on the player's location, needs to change to be fired
 		//closer to the end of the missile launcher, will deal with at later time.
 		
-		fuelLevel = 100;
+		fuelLevel = MISSILE_FUEL;
 		SetLocation(loc);
 		SetSpeed(speed);
 		SetDirection(missileLauncherDir);
+		SetSize(MISSILE_SIZE);
 		
 		this.type = type;
 		switch (type)
@@ -56,6 +60,11 @@ public class Missile extends MoveableGameObject implements ICollider, IDrawable
 	public int GetFuel()
 	{
 		return fuelLevel;
+	}
+	
+	public void ResetFuel()
+	{
+		fuelLevel = MISSILE_FUEL;
 	}
 	
 	/**
@@ -86,6 +95,11 @@ public class Missile extends MoveableGameObject implements ICollider, IDrawable
 		
 		g.drawRect(xLoc, yLoc, MISSILE_SIZE, MISSILE_SIZE);
 		g.fillRect(xLoc, yLoc, MISSILE_SIZE, MISSILE_SIZE);
+		
+		if (isSelected())
+		{
+			g.drawRect(xLoc - 5, yLoc - 5, this.GetSize() + 10, this.GetSize() + 10);
+		}
 	}
 
 	@Override
@@ -152,6 +166,38 @@ public class Missile extends MoveableGameObject implements ICollider, IDrawable
 	public boolean getCollisionFlag()
 	{
 		return collisionFlag;
+	}
+
+	@Override
+	public void setSelected(boolean yes)
+	{
+		selected = yes;
+	}
+
+	@Override
+	public boolean isSelected()
+	{
+		return selected;
+	}
+
+	@Override
+	public boolean contains(Point pPtrRelPrnt, Point pCmpRelPrnt)
+	{
+		int px = pPtrRelPrnt.getX();
+		int py = pPtrRelPrnt.getY();
+		
+		int xLoc = (int)this.GetFullLocation().getX() + pCmpRelPrnt.getX();
+		int yLoc = (int)this.GetFullLocation().getY() + pCmpRelPrnt.getY();
+		
+		if ( ((px >= xLoc - GetSize() /  2) && (px <= xLoc + GetSize() / 2)) && 
+				((py >= yLoc - GetSize() / 2) && (py <= yLoc + GetSize() / 2)))
+		{
+			return true;
+		}
+		else
+		{
+			return false;			
+		}
 	}
 	
 	public String toString()

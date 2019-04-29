@@ -12,11 +12,16 @@ import com.codename1.ui.plaf.Border;
 import com.mycompany.interfaces.IDrawable;
 import com.mycompany.interfaces.IGameWorld;
 import com.mycompany.interfaces.IIterator;
+import com.mycompany.interfaces.ISelectable;
+import com.mycompany.objects.GameObject;
 
 //View in MVC architecture
 public class MapView extends Container implements Observer 
 {	
 	private IGameWorld gwProxy;
+	
+	private int px;
+	private int py;
 	
 	/**
 	 * Creates a container that will display the game objects later in graphical form.
@@ -44,12 +49,11 @@ public class MapView extends Container implements Observer
 		super.paint(g);
 		
 		Point pCmpRelPrnt = new Point(this.getX(), this.getY());
-		Object curObject = new Object();
 		IIterator iterator = gwProxy.getCollection().getIterator();
 		
 		while (iterator.hasNext())
 		{
-			curObject = iterator.getNext();
+			GameObject curObject = iterator.getNext();
 			if (curObject instanceof IDrawable)
 			{
 //				pCmpRelPrnt.setX(getParent().getAbsoluteX());
@@ -57,6 +61,38 @@ public class MapView extends Container implements Observer
 				((IDrawable) curObject).draw(g, pCmpRelPrnt);
 			}
 		}
+	}
+	
+	@Override
+	public void pointerPressed(int x, int y)
+	{
+		px = x - getParent().getAbsoluteX();
+		py = y - getParent().getAbsoluteY();
+		
+		Point pPtrRelPrnt = new Point(px, py);
+		Point pCmpRelPrnt = new Point(getX(), getY());
+		
+		IIterator iterator = gwProxy.getCollection().getIterator();
+		
+		while (iterator.hasNext())
+		{
+			GameObject curObj = iterator.getNext();
+			if (curObj instanceof ISelectable)
+			{
+				ISelectable selectObj = (ISelectable)curObj;
+				
+				if (selectObj.contains(pPtrRelPrnt, pCmpRelPrnt))
+				{
+					selectObj.setSelected(true);
+				}
+				else
+				{
+					selectObj.setSelected(false);
+				}
+			}
+		}
+		repaint();
+		System.out.println("Pressed");
 	}
 	
 	public void setPrefSize(int width, int height)

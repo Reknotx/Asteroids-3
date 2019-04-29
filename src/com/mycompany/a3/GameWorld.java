@@ -236,6 +236,25 @@ public class GameWorld extends Observable implements IGameWorld
 	}
 	
 	/**
+	 * Refuels the currently selected missile to its maximum fuel value.
+	 */
+	public void RefuelMissile()
+	{
+		IIterator iterator = collection.getIterator();
+		
+		while (iterator.hasNext())
+		{
+			GameObject curObj = iterator.getNext();
+			
+			if (curObj instanceof Missile && ((Missile) curObj).isSelected())
+			{
+				((Missile)curObj).ResetFuel();
+				break;
+			}
+		}
+	}
+	
+	/**
 	 * Advance the game forward by one frame
 	 */
 	public void AdvanceGameClock(int elapsedTime)

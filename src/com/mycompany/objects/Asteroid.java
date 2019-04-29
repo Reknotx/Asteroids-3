@@ -4,11 +4,13 @@ import com.codename1.ui.Graphics;
 import com.codename1.ui.geom.Point;
 import com.mycompany.interfaces.ICollider;
 import com.mycompany.interfaces.IDrawable;
+import com.mycompany.interfaces.ISelectable;
 
-public class Asteroid extends MoveableGameObject implements ICollider, IDrawable
+public class Asteroid extends MoveableGameObject implements ICollider, IDrawable, ISelectable
 {
 	//private int size = 0;
 	private boolean collisionFlag = false;
+	private boolean selected = false;
 	
 	/**
 	 * Hazard that moves through space
@@ -53,6 +55,11 @@ public class Asteroid extends MoveableGameObject implements ICollider, IDrawable
 		
 		g.drawArc(xLoc, yLoc, this.GetSize(), this.GetSize(), 0, 360);
 		g.fillArc(xLoc, yLoc, this.GetSize(), this.GetSize(), 0, 360);
+		
+		if (isSelected())
+		{
+			g.drawRect(xLoc - 5, yLoc - 5, this.GetSize() + 10, this.GetSize() + 10);
+		}
 
 	}
 
@@ -103,6 +110,38 @@ public class Asteroid extends MoveableGameObject implements ICollider, IDrawable
 	public boolean getCollisionFlag() 
 	{
 		return collisionFlag;
+	}
+
+	@Override
+	public void setSelected(boolean yes)
+	{
+		selected = yes;
+	}
+
+	@Override
+	public boolean isSelected()
+	{
+		return selected;
+	}
+
+	@Override
+	public boolean contains(Point pPtrRelPrnt, Point pCmpRelPrnt)
+	{
+		int px = pPtrRelPrnt.getX();
+		int py = pPtrRelPrnt.getY();
+		
+		int xLoc = (int)this.GetFullLocation().getX() + pCmpRelPrnt.getX();
+		int yLoc = (int)this.GetFullLocation().getY() + pCmpRelPrnt.getY();
+		
+		if ( ((px >= xLoc - GetSize() /  2) && (px <= xLoc + GetSize() / 2)) && 
+				((py >= yLoc - GetSize() / 2) && (py <= yLoc + GetSize() / 2)))
+		{
+			return true;
+		}
+		else
+		{
+			return false;		
+		}
 	}
 	
 	public String toString()

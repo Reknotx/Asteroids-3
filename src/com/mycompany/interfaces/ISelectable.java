@@ -1,5 +1,6 @@
 package com.mycompany.interfaces;
 
+import com.codename1.ui.Graphics;
 import com.codename1.ui.geom.Point;
 
 public interface ISelectable 
@@ -22,5 +23,12 @@ public interface ISelectable
 	 * @return True if pointer is in an object, false otherwise
 	 */
 	public boolean contains(Point pPtrRelPrnt, Point pCmpRelPrnt);
+	
+	/**
+	 * Draws the objects that are selected
+	 * @param g - Graphics associated with the selected object
+	 * @param pCmpRelPrnt - Relative position of the object in world space
+	 */
+	public void draw(Graphics g, Point pCmpRelPrnt);
 	
 }

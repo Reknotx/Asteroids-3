@@ -34,10 +34,11 @@ public class Game extends Form  implements Runnable
 	private LauncherTurnRightCmd launcherRCMD;
 	private FirePlayerMissileCmd fireCMD;
 	private JumpCmd jumpCMD;
-	private PauseCmd pauseCmd;
+	private PauseCmd pauseCMD;
+	private RefuelCmd refuelCMD;
 	
 	private GameButton addAsteroid, addStation, addPlayer, accelerate, decelerate, turnLeft, turnRight,
-						launcherTurnLeft, launcherTurnRight, playerFire, jump, pauseGame;
+						launcherTurnLeft, launcherTurnRight, playerFire, jump, pauseGame, refuel;
 	
 	private boolean paused = false;
 	
@@ -88,7 +89,7 @@ public class Game extends Form  implements Runnable
 		gw.AdvanceGameClock(TIME_TILL_TICK);
 		timeElapsed += TIME_TILL_TICK;
 		
-		if (timeElapsed % 500 == 0)
+		if (timeElapsed >= 5000 && timeElapsed % 500 == 0)
 		{
 			int roll = RandClass.getRandInt(0, 100);
 			if (roll <= 5)
@@ -188,11 +189,18 @@ public class Game extends Form  implements Runnable
 		/* Jump button */
 		
 		/* Pause button */
-		pauseCmd = new PauseCmd(this);
-		pauseGame = new GameButton(pauseCmd);
-		this.addKeyListener('p', pauseCmd);
+		pauseCMD = new PauseCmd(this);
+		pauseGame = new GameButton(pauseCMD);
+		this.addKeyListener('p', pauseCMD); //Also does not work?
 		buttonContainer.add(pauseGame);
 		/* Pause button */
+		
+		/* Refuel button */
+		refuelCMD = new RefuelCmd(gw);
+		refuel = new GameButton(refuelCMD);
+		refuel.setEnabled(false);
+		buttonContainer.add(refuel);
+		/* Refuel button */
 				
 		//Sets the size of the map view container so that it fills in the remaining leftover space properly
 		mv.setWidth(this.getWidth() - buttonContainer.getPreferredW() - mv.getX());
@@ -246,6 +254,7 @@ public class Game extends Form  implements Runnable
 		launcherTurnRight.setEnabled(!launcherTurnRight.isEnabled());
 		playerFire.setEnabled(!playerFire.isEnabled());
 		jump.setEnabled(!jump.isEnabled());
+		refuel.setEnabled(!refuel.isEnabled());
 		
 		if (paused)
 		{
@@ -294,6 +303,8 @@ public class Game extends Form  implements Runnable
 		{
 			//Game is to resume
 			timer.schedule(TIME_TILL_TICK, true, this);
+			
+			pauseGame.setText("Pause");
 			
 			//Accelerate command
 			this.addKeyListener('w', accelCMD);
