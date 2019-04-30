@@ -3,18 +3,25 @@ package com.mycompany.a3;
 import java.util.Observable;
 
 import com.codename1.ui.Dialog;
+import com.codename1.util.MathUtil;
 import com.mycompany.interfaces.ICollider;
 import com.mycompany.interfaces.IGameWorld;
 import com.mycompany.interfaces.IIterator;
 import com.mycompany.interfaces.IMoveable;
 import com.mycompany.objects.*;
 import com.mycompany.objects.Missile.MissileType;
+import com.mycompany.sounds.Sound;
 
 //Model in MVC architecture
 public class GameWorld extends Observable implements IGameWorld
 {
 	public enum EntityType { PLAYER, ASTEROID, ENEMY, MISSILE }
 	private GameCollection collection;
+	
+	private Sound missileExplosion;
+	private Sound missileFire;
+	private Sound launcherRotate;
+	private Sound gameover;
 	
 	private int score;
 	private int elapsedTime;
@@ -39,6 +46,12 @@ public class GameWorld extends Observable implements IGameWorld
 		gameOver = false;
 		soundOn = true;
 		
+		missileExplosion = new Sound("explosion.wav");
+		missileFire = new Sound("missileLaunch.wav");
+		launcherRotate = new Sound("launcherRotate.wav");
+		gameover = new Sound("gameover.wav");
+		
+		
 		InformObservers();
 	}
 	
@@ -50,15 +63,6 @@ public class GameWorld extends Observable implements IGameWorld
 		GameWorldProxy gwp = new GameWorldProxy(this);
 		this.setChanged();
 		this.notifyObservers(gwp);
-		
-		if (gameOver)
-		{
-			String gameOverTxt = "Thank you for playing but the game is over.\nPlease restart the program.";
-			if (Dialog.show("Game Over!", gameOverTxt, "Ok", null))
-			{
-				System.exit(0);
-			}
-		}
 	}
 	
 	/**
@@ -77,9 +81,25 @@ public class GameWorld extends Observable implements IGameWorld
 	 */
 	public void SpawnEnemy()
 	{
+		IIterator iterator = collection.getIterator();
+		
+		while (iterator.hasNext())
+		{
+			if (iterator.getNext() instanceof EnemyShip)
+			{
+				/*
+				 * To avoid overpopulating the game world with enemy ships we will
+				 * only allow one to be available in the world at any time.
+				 */
+				return;
+			}
+		}
 		EnemyShip enemy = new EnemyShip();
 		enemy.SetRandLocation(mapWidth, mapHeight);
 		collection.add(enemy);
+		
+		FireEnemymissile();
+		
 		InformObservers();
 	}
 	
@@ -174,6 +194,7 @@ public class GameWorld extends Observable implements IGameWorld
 		if (playerObj != null) 
 		{
 			playerObj.ChangeLauncherDir(amount);
+			launcherRotate.play();
 			InformObservers();
 		}
 	}
@@ -188,8 +209,9 @@ public class GameWorld extends Observable implements IGameWorld
 		{
 			if (playerObj.GetMissileCount() > 0)
 			{				
-				Missile missile = new Missile(playerObj.GetLauncherDir(), playerObj.GetSpeed() + 5, playerObj.GetFullLocation(), MissileType.PLAYER);
+				Missile missile = new Missile(playerObj.GetLauncherDir(), playerObj.GetSpeed() + (5 * 50), playerObj.GetFullLocation(), MissileType.PLAYER);
 				collection.add(missile);
+				missileFire.play();
 				playerObj.Fire();
 				missileCount = playerObj.GetMissileCount();
 			}
@@ -209,9 +231,29 @@ public class GameWorld extends Observable implements IGameWorld
 	public void FireEnemymissile()
 	{
 		EnemyShip enemyObj = FindEnemyWithMissiles();
-		if (enemyObj != null)
+		PlayerShip playerObj = FindPlayer();
+		if (enemyObj != null && playerObj != null)
 		{
-			Missile missile = new Missile(enemyObj.GetLauncherDir(), enemyObj.GetSpeed() + 2, enemyObj.GetFullLocation(), MissileType.ENEMY);
+			int angle = (int)Math.toDegrees( MathUtil.atan( (enemyObj.GetFullLocation().getY() - playerObj.GetFullLocation().getY()) / (enemyObj.GetFullLocation().getX() - playerObj.GetFullLocation().getX() )));
+			System.out.println(angle);
+			if (angle < 90)
+			{
+				angle = 270 + angle;
+			}
+			else
+			{
+				angle = angle - 90;
+			}
+			
+			System.out.println(angle);
+			
+			enemyObj.SetLauncherDir(angle);
+			
+			Missile missile = new Missile(enemyObj.GetLauncherDir(), enemyObj.GetSpeed() + (5 * 50), enemyObj.GetFullLocation(), MissileType.ENEMY);
+			
+			System.out.println("Enemy launcher = " + enemyObj.GetLauncherDir());
+			System.out.println("Missile dir = " + missile.GetDirection());
+			
 			collection.add(missile);
 			enemyObj.Fire();
 			InformObservers();
@@ -257,7 +299,7 @@ public class GameWorld extends Observable implements IGameWorld
 	/**
 	 * Advance the game forward by one frame
 	 */
-	public void AdvanceGameClock(int elapsedTime)
+	public void AdvanceGameClock(double elapsedTime)
 	{
 		IIterator iterator = collection.getIterator();
 		//Handles movement of objects in the world
@@ -267,7 +309,7 @@ public class GameWorld extends Observable implements IGameWorld
 			if (obj instanceof IMoveable)
 			{
 				IMoveable moveObj = (IMoveable) obj;
-				moveObj.Move(mapWidth, mapHeight);
+				moveObj.Move(mapWidth, mapHeight, elapsedTime);
 				if (moveObj instanceof Missile)
 				{
 					Missile missileObj = (Missile) moveObj;
@@ -275,7 +317,19 @@ public class GameWorld extends Observable implements IGameWorld
 					if (missileObj.GetFuel() == 0)
 					{
 						iterator.remove();
+						if (missileObj.GetType() == MissileType.ENEMY)
+						{
+							FireEnemymissile();
+						}
 					}
+				}
+				else if (moveObj instanceof PlayerShip)
+				{
+					((PlayerShip)moveObj).MoveLauncher();
+				}
+				else if (moveObj instanceof EnemyShip)
+				{
+					((EnemyShip)moveObj).MoveLauncher();
 				}
 			}
 			else if (obj instanceof SpaceStation)
@@ -285,6 +339,10 @@ public class GameWorld extends Observable implements IGameWorld
 				{					
 					stationObj.IncreaseBlinkTime();
 				}
+			}
+			else if (obj instanceof PlayerShip)
+			{
+				missileCount = ((PlayerShip)obj).GetMissileCount();
 			}
 		}
 		
@@ -319,9 +377,8 @@ public class GameWorld extends Observable implements IGameWorld
 						
 						if (thisColliderObj.collidesWith(otherColliderObj))
 						{
-							System.out.println("Collision");
+//							System.out.println("Collision");
 							thisColliderObj.handleCollision(otherColliderObj);
-
 						}
 					}
 				}
@@ -357,6 +414,14 @@ public class GameWorld extends Observable implements IGameWorld
 					if (((Missile)obj).GetType() == MissileType.PLAYER)
 					{
 						score += ((Missile)obj).GetScoreGained();
+						if (((Missile)obj).GetScoreGained() > 0 )
+						{
+							missileExplosion.play();
+						}
+					}
+					else if (((Missile)obj).GetType() == MissileType.ENEMY)
+					{
+						FireEnemymissile();
 					}
 				}
 			}
@@ -375,6 +440,16 @@ public class GameWorld extends Observable implements IGameWorld
 			gameOver = true;
 		}
 		InformObservers();
+	}
+	
+	public void GameOver()
+	{
+		gameover.play();
+		String gameOverTxt = "Thank you for playing but the game is over.\nPlease restart the program.";
+		if (Dialog.show("Game Over!", gameOverTxt, "Ok", null))
+		{
+			System.exit(0);
+		}
 	}
 	
 	/**

@@ -1,5 +1,6 @@
 package com.mycompany.objects;
 
+import com.codename1.charts.util.ColorUtil;
 import com.codename1.ui.Graphics;
 import com.codename1.ui.geom.Point;
 import com.mycompany.interfaces.ICollider;
@@ -23,7 +24,7 @@ public class Asteroid extends MoveableGameObject implements ICollider, IDrawable
 		 * Also so that it is easier to find the bounds so i don't have to make
 		 * janky stuff.
 		 */
-		SetSize(rng.nextInt(25) + 20);
+		SetSize(rng.nextInt(10) + 40);
 	}
 	
 //	/**
@@ -37,7 +38,15 @@ public class Asteroid extends MoveableGameObject implements ICollider, IDrawable
 	@Override
 	public void draw(Graphics g, Point pCmpRelPrnt) 
 	{
-		g.setColor(this.GetColor());
+		if (isSelected())
+		{
+			g.setColor(ColorUtil.GREEN);
+		}
+		else
+		{
+			g.setColor(this.GetColor());
+			
+		}
 		
 		/*Obtains the location of the object in the game world, then adds the relative origin location
 		 * of mapview to it. Finally subtract half of the size so that the arc is drawn in the correct
@@ -56,10 +65,6 @@ public class Asteroid extends MoveableGameObject implements ICollider, IDrawable
 		g.drawArc(xLoc, yLoc, this.GetSize(), this.GetSize(), 0, 360);
 		g.fillArc(xLoc, yLoc, this.GetSize(), this.GetSize(), 0, 360);
 		
-		if (isSelected())
-		{
-			g.drawRect(xLoc - 5, yLoc - 5, this.GetSize() + 10, this.GetSize() + 10);
-		}
 
 	}
 

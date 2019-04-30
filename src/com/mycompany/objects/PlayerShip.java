@@ -20,11 +20,11 @@ public class PlayerShip extends Ship implements ICollider, IDrawable, ISteerable
 	public PlayerShip()
 	{
 		super(10);
-		launcher = new MissileLauncher(0);
 		SetSpeed(0);
 		SetDirection(0);
 		SetColor(0, 255, 255);
 		SetSize(30);
+		launcher = new MissileLauncher(this.GetDirection(), this.GetFullLocation());
 	}
 	
 	/**
@@ -34,6 +34,11 @@ public class PlayerShip extends Ship implements ICollider, IDrawable, ISteerable
 	public int GetLauncherDir()
 	{
 		return launcher.GetLauncherDir();
+	}
+	
+	public void MoveLauncher()
+	{
+		launcher.SetLocation(this.GetFullLocation());
 	}
 	
 	/**
@@ -58,15 +63,15 @@ public class PlayerShip extends Ship implements ICollider, IDrawable, ISteerable
 	 */
 	public void AdjustSpeed(boolean increase)
 	{
-		if (increase && GetSpeed() < 15)
+		if (increase && GetSpeed() < 750)
 		{
 			//Increase speed
-			SetSpeed(GetSpeed() + 1);
+			SetSpeed(GetSpeed() + 50);
 		}
 		else if (!increase && GetSpeed() > 0)
 		{
 			//Decrease speed
-			SetSpeed(GetSpeed() - 1);
+			SetSpeed(GetSpeed() - 50);
 		}
 	}
 	

@@ -1,10 +1,12 @@
 package com.mycompany.objects;
 
+import com.codename1.charts.util.ColorUtil;
 import com.codename1.ui.Graphics;
 import com.codename1.ui.geom.Point;
 import com.mycompany.interfaces.ICollider;
 import com.mycompany.interfaces.IDrawable;
 import com.mycompany.interfaces.ISelectable;
+import com.mycompany.objects.Missile.MissileType;
 
 public class EnemyShip extends Ship implements ICollider, IDrawable, ISelectable
 {
@@ -20,8 +22,8 @@ public class EnemyShip extends Ship implements ICollider, IDrawable, ISelectable
 	 */
 	public EnemyShip()
 	{
-		super(2);
-		launcher = new MissileLauncher(super.GetDirection());
+		super(5);
+		launcher = new MissileLauncher(this.GetDirection(), this.GetFullLocation());
 		SetSize((rng.nextInt(2) + 1) * 10);
 		SetColor(255, 0, 0);
 	}
@@ -42,14 +44,29 @@ public class EnemyShip extends Ship implements ICollider, IDrawable, ISelectable
 	{
 		return launcher.GetLauncherDir();
 	}
+	
+	public void SetLauncherDir(int dir)
+	{
+		launcher.SetLauncherDir(dir);
+	}
+	
+	public void MoveLauncher()
+	{
+		launcher.SetLocation(this.GetFullLocation());
+	}
 
 	@Override
 	public void draw(Graphics g, Point pCmpRelPrnt) 
 	{
 		
-		//This is correct
-		
-		g.setColor(this.GetColor());
+		if (isSelected())
+		{
+			g.setColor(ColorUtil.GREEN);
+		}
+		else
+		{
+			g.setColor(this.GetColor());
+		}
 		
 		int xLoc = (int)this.GetFullLocation().getX() + pCmpRelPrnt.getX();
 		int yLoc = (int)this.GetFullLocation().getY() + pCmpRelPrnt.getY();
@@ -63,10 +80,6 @@ public class EnemyShip extends Ship implements ICollider, IDrawable, ISelectable
 		g.drawPolygon(xPoints, yPoints, nPoints);
 		g.fillPolygon(xPoints, yPoints, nPoints);
 		
-		if (isSelected())
-		{
-			g.drawRect(xLoc - 5, yLoc - 5, this.GetSize() + 10, this.GetSize() + 10);
-		}
 	}
 
 	@Override
@@ -96,9 +109,13 @@ public class EnemyShip extends Ship implements ICollider, IDrawable, ISelectable
 	}
 
 	@Override
-	public void handleCollision(ICollider other) {
-		// TODO Auto-generated method stub
-		
+	public void handleCollision(ICollider other)
+	{
+		if (other instanceof Asteroid || other instanceof PlayerShip || (other instanceof Missile && ((Missile)other).GetType() == MissileType.PLAYER))
+		{
+			this.setCollisionFlag();
+			other.setCollisionFlag();
+		}
 	}	
 
 	@Override

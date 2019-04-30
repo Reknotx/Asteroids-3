@@ -13,7 +13,7 @@ public abstract class MoveableGameObject extends GameObject implements IMoveable
 	 */
 	public MoveableGameObject()
 	{
-		speed = rng.nextInt(16);
+		speed = (rng.nextInt(3) + 3) * 50;
 		direction = rng.nextInt(360);
 	}
 	
@@ -50,7 +50,7 @@ public abstract class MoveableGameObject extends GameObject implements IMoveable
 	}
 	
 	@Override
-	public void Move(double mapWidth, double mapHeight)
+	public void Move(double mapWidth, double mapHeight, double time)
 	{
 		Point2D newLoc = new Point2D(0.0, 0.0);
 		Point2D oldLoc = GetFullLocation();
@@ -64,16 +64,16 @@ public abstract class MoveableGameObject extends GameObject implements IMoveable
 		//If going directly north or south only affect Y
 		if (direction == 0 || direction == 180)
 		{
-			deltaY = Math.sin( Math.toRadians(90 - direction) ) * speed;
+			deltaY = Math.sin( Math.toRadians(90 - direction) ) * (speed * (time / 1000));
 		}
 		else if (direction == 90 || direction == 270)
 		{
-			deltaX = Math.cos( Math.toRadians(90 - direction) ) * speed;
+			deltaX = Math.cos( Math.toRadians(90 - direction) ) * (speed * (time / 1000));
 		}
 		else
 		{
-			deltaX = Math.cos( Math.toRadians(90 - direction) ) * speed;
-			deltaY = Math.sin( Math.toRadians(90 - direction) ) * speed;
+			deltaX = Math.cos( Math.toRadians(90 - direction) ) * (speed * (time / 1000));
+			deltaY = Math.sin( Math.toRadians(90 - direction) ) * (speed * (time / 1000));
 		}
 		
 		newX = deltaX + oldLoc.getX();

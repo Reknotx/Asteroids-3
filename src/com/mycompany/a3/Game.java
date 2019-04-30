@@ -7,6 +7,7 @@ import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.util.UITimer;
 import com.mycompany.commands.*;
+import com.mycompany.sounds.BGSound;
 import com.mycompany.views.MapView;
 import com.mycompany.views.PointsView;
 
@@ -15,7 +16,7 @@ import com.mycompany.views.PointsView;
 //Need to fix the map size
 public class Game extends Form  implements Runnable
 {
-	public final int TIME_TILL_TICK = 20;
+	public final double TIME_TILL_TICK = 20;
 
 	private GameWorld gw;
 	private MapView mv;
@@ -40,6 +41,8 @@ public class Game extends Form  implements Runnable
 	private GameButton addAsteroid, addStation, addPlayer, accelerate, decelerate, turnLeft, turnRight,
 						launcherTurnLeft, launcherTurnRight, playerFire, jump, pauseGame, refuel;
 	
+	private BGSound background;
+	
 	private boolean paused = false;
 	
 	private int timeElapsed = 0;
@@ -53,8 +56,6 @@ public class Game extends Form  implements Runnable
 		mv = new MapView();
 		pv = new PointsView();
 		
-//		System.out.println("Height = " + gw.getGameWorldHeight());
-//		System.out.println("Width = " + gw.getGameWorldWidth());
 		
 		System.out.println("Form Width = " + this.getWidth() + " Form Height = " + this.getHeight());
 		
@@ -80,7 +81,11 @@ public class Game extends Form  implements Runnable
 		
 		timer = new UITimer(this);
 				
-		timer.schedule(TIME_TILL_TICK, true, this);
+		timer.schedule((int)TIME_TILL_TICK, true, this);
+		
+		background = new BGSound("background.wav");
+		background.play();
+		
 	}
 	
 	@Override
@@ -92,7 +97,7 @@ public class Game extends Form  implements Runnable
 		if (timeElapsed >= 5000 && timeElapsed % 500 == 0)
 		{
 			int roll = RandClass.getRandInt(0, 100);
-			if (roll <= 5)
+			if (roll <= 20)
 			{
 				gw.SpawnEnemy();
 			}
@@ -100,7 +105,9 @@ public class Game extends Form  implements Runnable
 		
 		if (gw.getLives() == 0)
 		{
+			background.pause();
 			timer.cancel();
+			gw.GameOver();
 		}
 	}
 	
@@ -260,7 +267,7 @@ public class Game extends Form  implements Runnable
 		{
 			//Game is to be paused
 			timer.cancel();
-			
+			background.pause();
 			pauseGame.setText("Resume");
 			
 			//Accelerate command
@@ -302,8 +309,8 @@ public class Game extends Form  implements Runnable
 		else
 		{
 			//Game is to resume
-			timer.schedule(TIME_TILL_TICK, true, this);
-			
+			timer.schedule((int)TIME_TILL_TICK, true, this);
+			background.play();
 			pauseGame.setText("Pause");
 			
 			//Accelerate command

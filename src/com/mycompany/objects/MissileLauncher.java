@@ -2,6 +2,7 @@ package com.mycompany.objects;
 
 import com.codename1.ui.Graphics;
 import com.codename1.ui.geom.Point;
+import com.codename1.ui.geom.Point2D;
 import com.mycompany.interfaces.IDrawable;
 import com.mycompany.interfaces.ISteerable;
 
@@ -10,10 +11,11 @@ public class MissileLauncher extends MoveableGameObject implements IDrawable, IS
 	/**
 	 * @param startDir - The starting direction of the launcher, will typically be zero unless stated otherwise
 	 */
-	public MissileLauncher(int startDir)
+	public MissileLauncher(int startDir, Point2D startLoc)
 	{
-		SetColor(0, 0, 0);
+		SetColor(255, 255, 255);
 		SetDirection(startDir);
+		SetLocation(startLoc);
 	}
 	
 	/**
@@ -30,6 +32,11 @@ public class MissileLauncher extends MoveableGameObject implements IDrawable, IS
 	public void SetLauncherDir(int amount)
 	{
 		SetDirection(amount);
+	}
+	
+	public void SetLauncherLoc(Point2D loc)
+	{
+		SetLocation(loc);
 	}
 		
 	@Override
@@ -64,10 +71,12 @@ public class MissileLauncher extends MoveableGameObject implements IDrawable, IS
 		int xLoc = (int)this.GetFullLocation().getX() + pCmpRelPrnt.getX();
 		int yLoc = (int)this.GetFullLocation().getY() + pCmpRelPrnt.getY();
 		
-		int x2 = (int) Math.cos( Math.toRadians(90 - GetDirection())) + xLoc + 15;
-		int y2 = (int) Math.sin( Math.toRadians(90 - GetDirection())) + yLoc + 15;
+		double angle = Math.toRadians(90 - this.GetLauncherDir());
 		
-		g.drawLine(xLoc, yLoc, x2, y2);
+		double deltaX = Math.cos(angle);
+		double deltaY = Math.sin(angle);
+		
+		g.drawLine(xLoc, yLoc, (int)(xLoc + (50 * deltaX)), (int)(yLoc + (50 * deltaY)));
 		
 	}
 

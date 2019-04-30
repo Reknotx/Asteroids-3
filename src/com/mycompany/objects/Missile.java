@@ -1,5 +1,6 @@
 package com.mycompany.objects;
 
+import com.codename1.charts.util.ColorUtil;
 import com.codename1.ui.Graphics;
 import com.codename1.ui.geom.Point;
 import com.codename1.ui.geom.Point2D;
@@ -88,7 +89,14 @@ public class Missile extends MoveableGameObject implements ICollider, IDrawable,
 	@Override
 	public void draw(Graphics g, Point pCmpRelPrnt) 
 	{
-		g.setColor(this.GetColor());
+		if (isSelected())
+		{
+			g.setColor(ColorUtil.GREEN);
+		}
+		else
+		{			
+			g.setColor(this.GetColor());
+		}
 		
 		int xLoc = (int)this.GetFullLocation().getX() + pCmpRelPrnt.getX() - (MISSILE_SIZE / 2);
 		int yLoc = (int)this.GetFullLocation().getY() + pCmpRelPrnt.getY() - (MISSILE_SIZE / 2);
@@ -96,10 +104,6 @@ public class Missile extends MoveableGameObject implements ICollider, IDrawable,
 		g.drawRect(xLoc, yLoc, MISSILE_SIZE, MISSILE_SIZE);
 		g.fillRect(xLoc, yLoc, MISSILE_SIZE, MISSILE_SIZE);
 		
-		if (isSelected())
-		{
-			g.drawRect(xLoc - 5, yLoc - 5, this.GetSize() + 10, this.GetSize() + 10);
-		}
 	}
 
 	@Override
