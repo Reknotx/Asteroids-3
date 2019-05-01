@@ -1,4 +1,5 @@
 package com.mycompany.a3;
+import com.codename1.charts.util.ColorUtil;
 import com.codename1.ui.CheckBox;
 import com.codename1.ui.Container;
 import com.codename1.ui.Form;
@@ -231,9 +232,10 @@ public class Game extends Form  implements Runnable
 		menu.addCommandToSideMenu(undo);
 
 		CheckBox soundOn = new CheckBox("Sound");
-		SoundCmd sound = new SoundCmd(gw, soundOn);
+		soundOn.getAllStyles().setFgColor(ColorUtil.WHITE);
+		SoundCmd sound = new SoundCmd(this, soundOn);
 		soundOn.setCommand(sound);
-		menu.addCommandToSideMenu(sound);
+		menu.addComponentToSideMenu(soundOn);
 		
 		AboutCmd about = new AboutCmd();
 		menu.addCommandToSideMenu(about);
@@ -349,5 +351,18 @@ public class Game extends Form  implements Runnable
 			this.addKeyListener('j', jumpCMD);
 			//Jump command
 		}
+	}
+	
+	public void ChangeSoundSetting(boolean on)
+	{
+		if (on)
+		{
+			background.play();
+		}
+		else
+		{
+			background.pause();
+		}
+		gw.changeSoundSetting();
 	}
 }

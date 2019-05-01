@@ -80,6 +80,8 @@ public class EnemyShip extends Ship implements ICollider, IDrawable, ISelectable
 		g.drawPolygon(xPoints, yPoints, nPoints);
 		g.fillPolygon(xPoints, yPoints, nPoints);
 		
+		launcher.draw(g, pCmpRelPrnt);
+		
 	}
 
 	@Override

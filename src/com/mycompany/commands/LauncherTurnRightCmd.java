@@ -21,7 +21,7 @@ public class LauncherTurnRightCmd extends Command
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
-		gw.RotateLauncher(10);
+		gw.RotateLauncher(15);
 		System.out.println("Rotate launcher right");
 	}
 }

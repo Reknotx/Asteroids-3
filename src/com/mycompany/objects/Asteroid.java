@@ -6,6 +6,7 @@ import com.codename1.ui.geom.Point;
 import com.mycompany.interfaces.ICollider;
 import com.mycompany.interfaces.IDrawable;
 import com.mycompany.interfaces.ISelectable;
+import com.mycompany.objects.Missile.MissileType;
 
 public class Asteroid extends MoveableGameObject implements ICollider, IDrawable, ISelectable
 {
@@ -98,7 +99,7 @@ public class Asteroid extends MoveableGameObject implements ICollider, IDrawable
 	@Override
 	public void handleCollision(ICollider other) 
 	{
-		if (!(other instanceof SpaceStation))
+		if (other instanceof Asteroid || other instanceof Ship || (other instanceof Missile && ((Missile)other).GetType() == MissileType.PLAYER) )
 		{
 			this.setCollisionFlag();
 			other.setCollisionFlag();

@@ -126,6 +126,8 @@ public class PlayerShip extends Ship implements ICollider, IDrawable, ISteerable
 		
 		g.drawPolygon(xPoints, yPoints, nPoints);
 		g.fillPolygon(xPoints, yPoints, nPoints);
+		
+		launcher.draw(g, pCmpRelPrnt);
 	}
 
 	@Override

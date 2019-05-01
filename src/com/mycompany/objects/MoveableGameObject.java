@@ -91,20 +91,20 @@ public abstract class MoveableGameObject extends GameObject implements IMoveable
 		 * an infinite teleportation loop for the remainder of the game.
 		 */
 		
-		if (newX >= mapWidth)
+		if (newX > mapWidth)
 		{
 			newX = newX - mapWidth;
 		}
-		else if (newX <= 0.0)
+		else if (newX < 0.0)
 		{
 			newX = mapWidth - Math.abs(newX);
 		}
 		
-		if (newY >= mapHeight)
+		if (newY > mapHeight)
 		{
 			newY = newY - mapHeight;
 		}
-		else if (newY <= 0.0)
+		else if (newY < 0.0)
 		{
 			newY = mapHeight - Math.abs(newY);
 		}

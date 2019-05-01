@@ -172,12 +172,12 @@ public class GameWorld extends Observable implements IGameWorld
 			if (turnRight)
 			{
 				//Rotate player clockwise (right)
-				playerObj.Steer(10);
+				playerObj.Steer(15);
 			}
 			else
 			{
 				//Rotate player counter-clockwise (left)
-				playerObj.Steer(-10);
+				playerObj.Steer(-15);
 			}
 			InformObservers();
 		}
@@ -194,7 +194,12 @@ public class GameWorld extends Observable implements IGameWorld
 		if (playerObj != null) 
 		{
 			playerObj.ChangeLauncherDir(amount);
-			launcherRotate.play();
+			
+			if (soundOn)
+			{
+				launcherRotate.play();
+			}
+			
 			InformObservers();
 		}
 	}
@@ -208,10 +213,13 @@ public class GameWorld extends Observable implements IGameWorld
 		if (playerObj != null)
 		{
 			if (playerObj.GetMissileCount() > 0)
-			{				
+			{
 				Missile missile = new Missile(playerObj.GetLauncherDir(), playerObj.GetSpeed() + (5 * 50), playerObj.GetFullLocation(), MissileType.PLAYER);
 				collection.add(missile);
-				missileFire.play();
+				if (soundOn)
+				{					
+					missileFire.play();
+				}
 				playerObj.Fire();
 				missileCount = playerObj.GetMissileCount();
 			}
@@ -234,20 +242,19 @@ public class GameWorld extends Observable implements IGameWorld
 		PlayerShip playerObj = FindPlayer();
 		if (enemyObj != null && playerObj != null)
 		{
-			int angle = (int)Math.toDegrees( MathUtil.atan( (enemyObj.GetFullLocation().getY() - playerObj.GetFullLocation().getY()) / (enemyObj.GetFullLocation().getX() - playerObj.GetFullLocation().getX() )));
-			System.out.println(angle);
-			if (angle < 90)
-			{
-				angle = 270 + angle;
-			}
-			else
-			{
-				angle = angle - 90;
-			}
+			double y = (enemyObj.GetFullLocation().getY() - playerObj.GetFullLocation().getY());
+			double x = (enemyObj.GetFullLocation().getX() - playerObj.GetFullLocation().getX());
 			
+			int angle = (int) Math.toDegrees( MathUtil.atan( y / x ) );
+
 			System.out.println(angle);
 			
-			enemyObj.SetLauncherDir(angle);
+			if (enemyObj.GetFullLocation().getX() > playerObj.GetFullLocation().getX())
+			{
+				angle += 180;
+			}
+			
+			enemyObj.SetLauncherDir(90 - angle);
 			
 			Missile missile = new Missile(enemyObj.GetLauncherDir(), enemyObj.GetSpeed() + (5 * 50), enemyObj.GetFullLocation(), MissileType.ENEMY);
 			
@@ -414,7 +421,7 @@ public class GameWorld extends Observable implements IGameWorld
 					if (((Missile)obj).GetType() == MissileType.PLAYER)
 					{
 						score += ((Missile)obj).GetScoreGained();
-						if (((Missile)obj).GetScoreGained() > 0 )
+						if (((Missile)obj).GetScoreGained() > 0 && soundOn)
 						{
 							missileExplosion.play();
 						}
