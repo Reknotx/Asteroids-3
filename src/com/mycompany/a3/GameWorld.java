@@ -304,7 +304,7 @@ public class GameWorld extends Observable implements IGameWorld
 	}
 	
 	/**
-	 * Advance the game forward by one frame
+	 * Advance the game time forward by one tick (20 ms)
 	 */
 	public void AdvanceGameClock(double elapsedTime)
 	{
@@ -323,7 +323,7 @@ public class GameWorld extends Observable implements IGameWorld
 					missileObj.DecreaseFuel();
 					if (missileObj.GetFuel() == 0)
 					{
-						iterator.remove();
+						iterator.remove(missileObj);
 						if (missileObj.GetType() == MissileType.ENEMY)
 						{
 							FireEnemymissile();
@@ -347,7 +347,8 @@ public class GameWorld extends Observable implements IGameWorld
 					stationObj.IncreaseBlinkTime();
 				}
 			}
-			else if (obj instanceof PlayerShip)
+			
+			if (obj instanceof PlayerShip)
 			{
 				missileCount = ((PlayerShip)obj).GetMissileCount();
 			}
