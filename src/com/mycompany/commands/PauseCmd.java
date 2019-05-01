@@ -8,6 +8,10 @@ public class PauseCmd extends Command
 {
 	Game g;
 	
+	/**
+	 * Used to pause and unpause the game.
+	 * @param g - Reference to the game form where buttons are located
+	 */
 	public PauseCmd(Game g)
 	{
 		super("Pause");

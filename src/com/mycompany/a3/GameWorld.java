@@ -15,7 +15,6 @@ import com.mycompany.sounds.Sound;
 //Model in MVC architecture
 public class GameWorld extends Observable implements IGameWorld
 {
-	public enum EntityType { PLAYER, ASTEROID, ENEMY, MISSILE }
 	private GameCollection collection;
 	
 	private Sound missileExplosion;
@@ -34,6 +33,9 @@ public class GameWorld extends Observable implements IGameWorld
 	private boolean gameOver;
 	private boolean soundOn;
 	
+	/**
+	 * Initializes the gameworld
+	 */
 	public void init()
 	{
 		collection = new GameCollection();
@@ -88,7 +90,7 @@ public class GameWorld extends Observable implements IGameWorld
 			if (iterator.getNext() instanceof EnemyShip)
 			{
 				/*
-				 * To avoid overpopulating the game world with enemy ships we will
+				 * To avoid over populating the game world with enemy ships we will
 				 * only allow one to be available in the world at any time.
 				 */
 				return;
@@ -233,8 +235,8 @@ public class GameWorld extends Observable implements IGameWorld
 	
 	/**
 	 * Fires a missile from Enemy Ship if one exists with missiles to fire.
+	 * Aims towards the player ship's current location.
 	 * 
-	 * obsolete?
 	 */
 	public void FireEnemymissile()
 	{
@@ -247,8 +249,6 @@ public class GameWorld extends Observable implements IGameWorld
 			
 			int angle = (int) Math.toDegrees( MathUtil.atan( y / x ) );
 
-			System.out.println(angle);
-			
 			if (enemyObj.GetFullLocation().getX() > playerObj.GetFullLocation().getX())
 			{
 				angle += 180;
@@ -257,10 +257,7 @@ public class GameWorld extends Observable implements IGameWorld
 			enemyObj.SetLauncherDir(90 - angle);
 			
 			Missile missile = new Missile(enemyObj.GetLauncherDir(), enemyObj.GetSpeed() + (5 * 50), enemyObj.GetFullLocation(), MissileType.ENEMY);
-			
-			System.out.println("Enemy launcher = " + enemyObj.GetLauncherDir());
-			System.out.println("Missile dir = " + missile.GetDirection());
-			
+						
 			collection.add(missile);
 			enemyObj.Fire();
 			InformObservers();
@@ -450,10 +447,13 @@ public class GameWorld extends Observable implements IGameWorld
 		InformObservers();
 	}
 	
+	/**
+	 * Called when the player has run out of lives and plays the game over music
+	 */
 	public void GameOver()
 	{
 		gameover.play();
-		String gameOverTxt = "Thank you for playing but the game is over.\nPlease restart the program.";
+		String gameOverTxt = "Thank you for playing but the game is over.\nPlease restart the program.\nFinal score: " + score;
 		if (Dialog.show("Game Over!", gameOverTxt, "Ok", null))
 		{
 			System.exit(0);

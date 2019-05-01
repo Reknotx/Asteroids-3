@@ -24,7 +24,14 @@ public interface ICollider
 	 */
 	public void handleCollision(ICollider other);
 	
+	/**
+	 * Sets the collision flag boolean variable of the collider object
+	 */
 	public void setCollisionFlag();
 	
+	/**
+	 * 
+	 * @return the boolean variable for collision flagging
+	 */
 	public boolean getCollisionFlag();
 }

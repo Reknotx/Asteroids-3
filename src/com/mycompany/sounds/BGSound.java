@@ -10,6 +10,11 @@ public class BGSound implements Runnable
 {
 	private Media m;
 	
+	/**
+	 * Class used to play the looping background music. Music immediately starts over
+	 * after finishing the first time.
+	 * @param fileName - name of the music to play and loop
+	 */
 	public BGSound(String fileName)
 	{
 		try

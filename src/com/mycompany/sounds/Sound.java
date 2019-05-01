@@ -9,6 +9,10 @@ public class Sound
 {
 	private Media m;
 	
+	/**
+	 * Class used to play single use sounds that do not repeat.
+	 * @param fileName - the name of the sound file to be played
+	 */
 	public Sound(String fileName)
 	{
 		try
