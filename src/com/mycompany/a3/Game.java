@@ -233,6 +233,7 @@ public class Game extends Form  implements Runnable
 
 		CheckBox soundOn = new CheckBox("Sound");
 		soundOn.getAllStyles().setFgColor(ColorUtil.WHITE);
+		soundOn.setSelected(true);
 		SoundCmd sound = new SoundCmd(this, soundOn);
 		soundOn.setCommand(sound);
 		menu.addComponentToSideMenu(soundOn);
