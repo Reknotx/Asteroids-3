@@ -8,6 +8,7 @@ import com.mycompany.interfaces.ICollider;
 import com.mycompany.interfaces.IGameWorld;
 import com.mycompany.interfaces.IIterator;
 import com.mycompany.interfaces.IMoveable;
+import com.mycompany.interfaces.ISelectable;
 import com.mycompany.objects.*;
 import com.mycompany.objects.Missile.MissileType;
 import com.mycompany.sounds.Sound;
@@ -296,6 +297,29 @@ public class GameWorld extends Observable implements IGameWorld
 			{
 				((Missile)curObj).ResetFuel();
 				break;
+			}
+		}
+	}
+	
+	/**
+	 * Deselects the object, if there is one, after resuming gameplay
+	 */
+	public void DeSelectObjs()
+	{
+		IIterator iterator = collection.getIterator();
+		
+		while (iterator.hasNext())
+		{
+			Object obj = iterator.getNext();
+			
+			if (obj instanceof ISelectable)
+			{
+				ISelectable selectObj = (ISelectable)obj;
+				
+				if (selectObj.isSelected())
+				{
+					selectObj.setSelected(false);
+				}
 			}
 		}
 	}

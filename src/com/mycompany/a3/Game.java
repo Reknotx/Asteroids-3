@@ -315,6 +315,7 @@ public class Game extends Form  implements Runnable
 			timer.schedule((int)TIME_TILL_TICK, true, this);
 			background.play();
 			pauseGame.setText("Pause");
+			gw.DeSelectObjs();
 			
 			//Accelerate command
 			this.addKeyListener('w', accelCMD);
